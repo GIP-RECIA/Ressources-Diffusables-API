@@ -11,10 +11,9 @@ import java.util.List;
 
 @Slf4j
 public class ServiceCacheHistoriqueEhcache implements ServiceCacheHistorique{
-    // Attributs
+
     Cache cache = CacheManager.getInstance().getCache("cacheRessourcesDiffusables");
 
-    // Méthodes
     @Override
     public List<RessourceDiffusable> get(RessourceDiffusableFilter filter) {
         Element element = this.cache.get(filter);

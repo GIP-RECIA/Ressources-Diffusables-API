@@ -10,10 +10,9 @@ import java.util.Collection;
 import java.util.List;
 
 public class ServiceGarStatique implements ServiceGar {
-    // Attributs
+
     private final List<RessourceDiffusable> ressourcesDiffusablesComplet = new ArrayList<>();
 
-    // Getteurs
     @Override
     public int getSize(RessourceDiffusableFilter filter) {
         return this.ressourcesDiffusablesComplet.size();
@@ -55,7 +54,6 @@ public class ServiceGarStatique implements ServiceGar {
         return ressourcesDiffusablesFiltrees;
     }
 
-    // Méthodes
     private void initialize() {
         for (int i = 0; i < 100; i++) {
             this.ajouterRessource(

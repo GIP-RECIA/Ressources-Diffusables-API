@@ -18,11 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping(path = "api/")
 public class ApiRessourcesDiffusablesController {
-    // Attributs
+
     @Autowired
     private ServiceGar serviceGar;
 
-    // Méthodes
     @GetMapping(value = "/ressources-diffusables")
     public ApiResponse ressourcesDiffusables(
             @RequestParam(value = "page") final int page,

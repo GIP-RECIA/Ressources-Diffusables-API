@@ -26,7 +26,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 
 @Slf4j
 public class ServiceGarHttpGet implements ServiceGar {
-    // Attributs
+
     @Autowired
     private ServiceCacheHistorique serviceCacheHistorique;
 
@@ -46,7 +46,6 @@ public class ServiceGarHttpGet implements ServiceGar {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    // Getteurs
     @Override
     public int getSize(RessourceDiffusableFilter filter) {
         return this.rechercher(filter).size();
@@ -62,7 +61,6 @@ public class ServiceGarHttpGet implements ServiceGar {
         return this.genererPage(this.rechercher(filter), page, ressourcesPerPage);
     }
 
-    // Méthodes
     private List<RessourceDiffusable> rechercher(RessourceDiffusableFilter filter) {
         // On vérifie que les données sont toujours valides.
         this.verifValidite();

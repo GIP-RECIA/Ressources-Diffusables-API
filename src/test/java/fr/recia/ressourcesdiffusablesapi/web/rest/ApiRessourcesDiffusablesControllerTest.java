@@ -25,14 +25,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @ExtendWith(SpringExtension.class)
 @Slf4j
 @SpringBootTest
-public class ApiRessourcesDiffusablesControllerTest {
-    // Attributs
+class ApiRessourcesDiffusablesControllerTest {
+
     @Autowired
     private ServiceGar serviceGar;
 
     private MockMvc mockListRessourcesMvc;
 
-    // Méthodes
     @PostConstruct
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -45,7 +44,7 @@ public class ApiRessourcesDiffusablesControllerTest {
     }
 
     @Test
-    public void testJsonApiRessourcesDiffusables() throws Exception {
+    void testJsonApiRessourcesDiffusables() throws Exception {
         this.mockListRessourcesMvc.perform(get("/api/ressources-diffusables?page=0")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .accept(TestUtil.APPLICATION_JSON_UTF8))
@@ -116,7 +115,7 @@ public class ApiRessourcesDiffusablesControllerTest {
     }
 
     @Test
-    public void testJsonApiRessourcesDiffusablesBadRequest() throws Exception {
+    void testJsonApiRessourcesDiffusablesBadRequest() throws Exception {
         this.mockListRessourcesMvc.perform(get("/api/ressources-diffusables?page=pokemon")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .accept(TestUtil.APPLICATION_JSON_UTF8))
@@ -158,7 +157,7 @@ public class ApiRessourcesDiffusablesControllerTest {
     }
 
     @Test
-    public void testJsonApiRessourcesDiffusablesPageCount() throws Exception {
+    void testJsonApiRessourcesDiffusablesPageCount() throws Exception {
         this.mockListRessourcesMvc.perform(get("/api/ressources-diffusables/page-count")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .accept(TestUtil.APPLICATION_JSON_UTF8))
@@ -192,7 +191,7 @@ public class ApiRessourcesDiffusablesControllerTest {
     }
 
     @Test
-    public void testJsonApiRessourcesDiffusablesSize() throws Exception {
+    void testJsonApiRessourcesDiffusablesSize() throws Exception {
         this.mockListRessourcesMvc.perform(get("/api/ressources-diffusables/size")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .accept(TestUtil.APPLICATION_JSON_UTF8))

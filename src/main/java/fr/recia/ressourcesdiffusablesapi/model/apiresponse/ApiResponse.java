@@ -1,12 +1,11 @@
 package fr.recia.ressourcesdiffusablesapi.model.apiresponse;
 
 public class ApiResponse {
-    // Attributs
+
     private final long timestamp;
     private String message;
     private Object payload;
 
-    // Constructeurs
     private ApiResponse() {
         this.timestamp = System.currentTimeMillis();
     }
@@ -17,7 +16,6 @@ public class ApiResponse {
         this.payload = payload;
     }
 
-    // Getteurs
     public long getTimestamp() {
         return this.timestamp;
     }

@@ -1,10 +1,9 @@
 package fr.recia.ressourcesdiffusablesapi.model.apiresponse;
 
 public class ApiError {
-    // Attributs
+
     private final Throwable exception;
 
-    // Constructeurs
     public ApiError(Throwable exception) {
         this.exception = exception;
     }

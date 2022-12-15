@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @RestController
 public class HealthCheckController {
-    // Méthodes
+
     @GetMapping(value = "/health-check")
     @ResponseStatus(HttpStatus.OK)
     public void healthCheck(HttpServletRequest request, HttpServletResponse response) {

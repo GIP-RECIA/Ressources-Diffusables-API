@@ -19,11 +19,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @Slf4j
 @SpringBootTest
-public class HealthCheckTest {
-    // Attributs.
+class HealthCheckTest {
+
     private MockMvc mockHealthCheckMvc;
 
-    // Méthodes
     @PostConstruct
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -34,7 +33,7 @@ public class HealthCheckTest {
     }
 
     @Test
-    public void testHealthCheck() throws Exception {
+    void testHealthCheck() throws Exception {
         mockHealthCheckMvc.perform(head("/health-check")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .accept(TestUtil.APPLICATION_JSON_UTF8))

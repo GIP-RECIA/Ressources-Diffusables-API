@@ -11,11 +11,10 @@ import javax.cache.spi.CachingProvider;
 import java.util.List;
 
 public class ServiceCacheHistoriqueJCache implements ServiceCacheHistorique {
-    // Attributs
+
     private final Cache<RessourceDiffusableFilter, List<RessourceDiffusable>> cache;
     private int size;
 
-    // Constructeurs
     public ServiceCacheHistoriqueJCache() {
         CachingProvider cachingProvider = Caching.getCachingProvider();
         CacheManager cacheManager = cachingProvider.getCacheManager();
@@ -27,7 +26,6 @@ public class ServiceCacheHistoriqueJCache implements ServiceCacheHistorique {
         this.size = 0;
     }
 
-    // Méthodes
     @Override
     public List<RessourceDiffusable> get(RessourceDiffusableFilter filter) {
         return this.cache.get(filter);

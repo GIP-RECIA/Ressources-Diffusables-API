@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 public class RessourceDiffusable implements Serializable {
-    // Attributs
+
     private final AttributRessource ressource;
     private final AttributRessource editeur;
     private final Collection<AttributRessource> distributeursCom;
@@ -13,7 +13,6 @@ public class RessourceDiffusable implements Serializable {
     private final boolean affichable;
     private final boolean diffusable;
 
-    // Constructeurs
     public RessourceDiffusable(
             AttributRessource ressource,
             AttributRessource editeur,
@@ -30,7 +29,6 @@ public class RessourceDiffusable implements Serializable {
         this.diffusable = diffusable;
     }
 
-    // Getteurs
     public AttributRessource getRessource() {
         return this.ressource;
     }
@@ -55,7 +53,6 @@ public class RessourceDiffusable implements Serializable {
         return this.diffusable;
     }
 
-    // Méthodes
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

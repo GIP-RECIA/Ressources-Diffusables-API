@@ -6,7 +6,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class RessourceDiffusableFilter implements Serializable {
-    // Attributs
+
     private enum Operator { AND, OR }
     private final Operator operator;
     private final String idRessource;
@@ -20,7 +20,6 @@ public class RessourceDiffusableFilter implements Serializable {
     private final Boolean affichable;
     private final Boolean diffusable;
 
-    // Constructeurs
     public RessourceDiffusableFilter(
             String operator,
             String idRessource,
@@ -47,7 +46,6 @@ public class RessourceDiffusableFilter implements Serializable {
         this.diffusable = diffusable;
     }
 
-    // Getteurs
     public Operator getOperator() {
         return this.operator;
     }
@@ -92,7 +90,6 @@ public class RessourceDiffusableFilter implements Serializable {
         return this.diffusable;
     }
 
-    // Méthodes
     private static Operator operatorByName(String name) {
         for (Operator operator : Operator.values()) {
             if (name.equals(operator.name())) {

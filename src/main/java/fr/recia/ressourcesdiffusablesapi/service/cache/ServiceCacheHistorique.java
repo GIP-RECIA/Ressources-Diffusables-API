@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public interface ServiceCacheHistorique {
-    // Méthodes
+
     /**
      * Retourne la liste de ressources diffusables correspondant au filtre si cette dernière a été mise en cache.
      * @param filter Filtre pour lequel on recherche la liste correspondante

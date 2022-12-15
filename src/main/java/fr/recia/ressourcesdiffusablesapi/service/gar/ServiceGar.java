@@ -8,7 +8,7 @@ import java.util.Collection;
 
 @Service
 public interface ServiceGar {
-    // Getteurs
+
     /**
      * Retourne le nombre de ressources diffusables sélectionnées par le filtre.
      * @param filter Filtre de la requête

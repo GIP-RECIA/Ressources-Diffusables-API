@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Slf4j
 public class ServiceCacheHistoriqueMap implements ServiceCacheHistorique {
-    // Attributs
+
     private final LinkedHashMap<RessourceDiffusableFilter, List<RessourceDiffusable>> historiqueRequetes = new LinkedHashMap<>() {
         @Override
         protected boolean removeEldestEntry(final Map.Entry eldest) {
@@ -18,7 +18,6 @@ public class ServiceCacheHistoriqueMap implements ServiceCacheHistorique {
         }
     };
 
-    // Méthodes
     @Override
     public List<RessourceDiffusable> get(RessourceDiffusableFilter filter) {
         return this.historiqueRequetes.get(filter);

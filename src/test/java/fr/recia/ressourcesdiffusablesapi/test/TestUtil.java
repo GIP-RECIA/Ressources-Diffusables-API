@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
  * Utility class for testing REST controllers.
  */
 public class TestUtil {
+
     /** MediaType for JSON UTF8 */
     public static final MediaType APPLICATION_JSON_UTF8 =
             new MediaType(
