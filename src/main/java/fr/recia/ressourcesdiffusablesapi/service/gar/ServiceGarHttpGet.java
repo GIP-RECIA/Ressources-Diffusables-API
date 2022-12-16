@@ -66,12 +66,12 @@ public class ServiceGarHttpGet implements ServiceGar {
         this.verifValidite();
 
         if (filter.isEmpty()) { // Soit le filtre est vide...
-            if(log.isDebugEnabled()) log.debug("Ressources diffusables request: No filter; no need to check history");
+            if (log.isDebugEnabled()) log.debug("Ressources diffusables request: No filter; no need to check history");
             return this.ressourcesDiffusablesComplet;
         } else { // Soit il faut faire un filtrage. Il est peut-être historisé.
             List<RessourceDiffusable> ressourcesDiffusablesHistorisees = this.serviceCacheHistorique.get(filter);
             if (ressourcesDiffusablesHistorisees != null) {
-                if(log.isDebugEnabled()) log.debug("Ressources diffusables request: Getting request result from history");
+                if (log.isDebugEnabled()) log.debug("Ressources diffusables request: Getting request result from history");
                 return ressourcesDiffusablesHistorisees;
             } else {
                 List<RessourceDiffusable> ressourcesDiffusablesFiltrees = new ArrayList<>();
@@ -107,8 +107,8 @@ public class ServiceGarHttpGet implements ServiceGar {
     private void telechargerFichier() {
         try {
             // Début du téléchargement.
-            if(log.isInfoEnabled()) log.info("Ressources diffusables source file download: Starting download procedure");
-            if(log.isDebugEnabled()) log.debug("Ressources diffusables source file download: URL is {}", this.ressourcesDiffusablesUri);
+            if (log.isInfoEnabled()) log.info("Ressources diffusables source file download: Starting download procedure");
+            if (log.isDebugEnabled()) log.debug("Ressources diffusables source file download: URL is {}", this.ressourcesDiffusablesUri);
 
             // Identification du fichier.
             if (this.ressourcesDiffusablesFile == null) {
@@ -116,7 +116,7 @@ public class ServiceGarHttpGet implements ServiceGar {
             }
 
             // Création du répertoire parent s'il n'existe pas.
-            if (!this.ressourcesDiffusablesFile.getParentFile().exists()){
+            if (!this.ressourcesDiffusablesFile.getParentFile().exists()) {
                 this.ressourcesDiffusablesFile.getParentFile().mkdirs();
             }
 
@@ -136,7 +136,7 @@ public class ServiceGarHttpGet implements ServiceGar {
             this.serviceCacheHistorique.clear();
 
             // Fin de téléchargement
-            if(log.isInfoEnabled()) log.info("Ressources diffusables source file download: ressources diffusables source file successfully downloaded!");
+            if (log.isInfoEnabled()) log.info("Ressources diffusables source file download: ressources diffusables source file successfully downloaded!");
 
             // Lancement de la lecture du fichier.
             this.lireFichier();
@@ -149,8 +149,8 @@ public class ServiceGarHttpGet implements ServiceGar {
     }
 
     private void lireFichier() {
-        if(log.isDebugEnabled()) log.debug("Reading of ressources diffusables source file: Starting reading procedure");
-        if(log.isDebugEnabled()) log.debug("Reading of ressources diffusables source file: file is at {}", this.ressourcesDiffusablesFile.getAbsolutePath());
+        if (log.isDebugEnabled()) log.debug("Reading of ressources diffusables source file: Starting reading procedure");
+        if (log.isDebugEnabled()) log.debug("Reading of ressources diffusables source file: file is at {}", this.ressourcesDiffusablesFile.getAbsolutePath());
 
         try {
             // Lecture du JSON.
@@ -164,14 +164,14 @@ public class ServiceGarHttpGet implements ServiceGar {
                     jsonNode.get("dateGeneration").asText().replaceAll(" ", ""),
                     DateTimeFormatter.ISO_DATE_TIME
             );
-            if(log.isDebugEnabled()) log.debug(
+            if (log.isDebugEnabled()) log.debug(
                     "Reading of ressources diffusables source file: Ressources diffusables source file generation date: {}",
                     DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss").format(dateGeneration)
             );
 
             // Est-ce que cela est utile de le relire ?
             if (this.dateGeneration != null && dateGeneration.isEqual(this.dateGeneration)) {
-                if(log.isDebugEnabled()) log.debug("Reading of ressources diffusables source file: The file that has been previously read and the file currently read are the same; stopping the reading procedure");
+                if (log.isDebugEnabled()) log.debug("Reading of ressources diffusables source file: The file that has been previously read and the file currently read are the same; stopping the reading procedure");
                 return;
             } else {
                 this.dateGeneration = dateGeneration;
@@ -284,6 +284,6 @@ public class ServiceGarHttpGet implements ServiceGar {
         this.serviceCacheHistorique.clear();
 
         // Fin de lecture.
-        if(log.isDebugEnabled()) log.debug("Reading of ressources diffusables source file: Ressources diffusables source file successfully read!");
+        if (log.isDebugEnabled()) log.debug("Reading of ressources diffusables source file: Ressources diffusables source file successfully read!");
     }
 }

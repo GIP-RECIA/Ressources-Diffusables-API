@@ -8,7 +8,6 @@ public class ApiError {
         this.exception = exception;
     }
 
-    // Getteurs
     public String getExceptionName() {
         return this.exception.getClass().getSimpleName();
     }

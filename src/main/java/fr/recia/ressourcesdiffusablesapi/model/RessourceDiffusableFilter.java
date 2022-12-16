@@ -96,6 +96,7 @@ public class RessourceDiffusableFilter implements Serializable {
                 return operator;
             }
         }
+
         return Operator.AND;
     }
 
@@ -104,6 +105,7 @@ public class RessourceDiffusableFilter implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RessourceDiffusableFilter that = (RessourceDiffusableFilter) o;
+
         return operator == that.operator && Objects.equals(idRessource, that.idRessource) && Objects.equals(nomRessource, that.nomRessource) && Objects.equals(idEditeur, that.idEditeur) && Objects.equals(nomEditeur, that.nomEditeur) && Objects.equals(distributeurCom, that.distributeurCom) && Objects.equals(nomDistributeurCom, that.nomDistributeurCom) && Objects.equals(distributeurTech, that.distributeurTech) && Objects.equals(nomDistributeurTech, that.nomDistributeurTech) && Objects.equals(affichable, that.affichable) && Objects.equals(diffusable, that.diffusable);
     }
 

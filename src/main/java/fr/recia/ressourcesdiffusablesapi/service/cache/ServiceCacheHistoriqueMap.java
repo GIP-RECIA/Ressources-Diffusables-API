@@ -38,6 +38,6 @@ public class ServiceCacheHistoriqueMap implements ServiceCacheHistorique {
     public void clear() {
         int count = this.historiqueRequetes.size();
         this.historiqueRequetes.clear();
-        if(log.isDebugEnabled()) log.debug("Cache: History cleared using HashMap; " + count + " elements removed");
+        if (log.isDebugEnabled()) log.debug("Cache: History cleared using HashMap; " + count + " elements removed");
     }
 }

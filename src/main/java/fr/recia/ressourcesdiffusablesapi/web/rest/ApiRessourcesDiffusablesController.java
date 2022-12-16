@@ -40,7 +40,7 @@ public class ApiRessourcesDiffusablesController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        if(log.isDebugEnabled()) log.debug("Ressources diffusables request.");
+        if (log.isDebugEnabled()) log.debug("Ressources diffusables request.");
         return new ApiResponse(
                 "Ressources diffusables request successful.",
                 this.serviceGar.getRessourcesDiffusables(
@@ -80,7 +80,7 @@ public class ApiRessourcesDiffusablesController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        if(log.isDebugEnabled()) log.debug("Nombre pages ressources diffusables request.");
+        if (log.isDebugEnabled()) log.debug("Nombre pages ressources diffusables request.");
         return new ApiResponse(
                 "Ressources diffusables page count request successful.",
                 this.serviceGar.getPageCount(
@@ -118,7 +118,7 @@ public class ApiRessourcesDiffusablesController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        if(log.isDebugEnabled()) log.debug("Nombre éléments ressources diffusables request.");
+        if (log.isDebugEnabled()) log.debug("Nombre éléments ressources diffusables request.");
         return new ApiResponse(
                 "Ressources diffusables list size request successful.",
                 this.serviceGar.getSize(
@@ -155,9 +155,7 @@ public class ApiRessourcesDiffusablesController {
         );
     }
 
-    @ExceptionHandler(
-            Exception.class
-    )
+    @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
     public ApiResponse handleExceptionElse(
             HttpServletRequest request,

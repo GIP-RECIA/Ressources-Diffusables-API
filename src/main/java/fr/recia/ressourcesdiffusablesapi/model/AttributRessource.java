@@ -26,6 +26,7 @@ public class AttributRessource implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AttributRessource that = (AttributRessource) o;
+
         return id.equals(that.id);
     }
 

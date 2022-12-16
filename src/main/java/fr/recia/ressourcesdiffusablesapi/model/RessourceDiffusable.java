@@ -58,6 +58,7 @@ public class RessourceDiffusable implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RessourceDiffusable that = (RessourceDiffusable) o;
+
         return affichable == that.affichable && diffusable == that.diffusable && ressource.equals(that.ressource) && editeur.equals(that.editeur) && distributeursCom.equals(that.distributeursCom) && distributeurTech.equals(that.distributeurTech);
     }
 
