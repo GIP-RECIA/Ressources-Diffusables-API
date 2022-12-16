@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
@@ -28,7 +28,7 @@ import java.util.List;
 @Slf4j
 @Configuration
 @EnableWebSecurity
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration {
 
     @Value("${security-configuration.soffit.jwt.signatureKey:Changeme}")
     private String signatureKey;
@@ -51,34 +51,32 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Value("${security-configuration.cors.allowed-methods}")
     private List<String> corsAllowedMethods;
 
-    @Override
-    public void configure(WebSecurity web) {
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
         final RequestMatcher pathMatcher = new AntPathRequestMatcher("/api/**");
         final RequestMatcher inverseMatcher = new NegatedRequestMatcher(pathMatcher);
-        web.ignoring().requestMatchers(inverseMatcher);
+
+        return web -> web.ignoring().requestMatchers(inverseMatcher);
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         if(log.isDebugEnabled()) log.debug("configure signatureKey = {}", this.signatureKey);
         final AbstractPreAuthenticatedProcessingFilter filter =
                 new SoffitApiPreAuthenticatedProcessingFilter(this.signatureKey);
 
         filter.setAuthenticationManager(authenticationManager());
 
-        http
-                .addFilter(filter)
-                .authorizeRequests()
-                    .antMatchers("/health-check").anonymous()
-                    .antMatchers(HttpMethod.GET, "/api/**").authenticated()
-                    .anyRequest().denyAll()
-                .and()
-                    .cors()
-                    .configurationSource(corsConfigurationSource())
-                .and()
-                    .sessionManagement()
-                        .sessionFixation()
-                            .none();
+        http.addFilter(filter);
+        http.authorizeHttpRequests(authz -> authz
+                .antMatchers("/health-check").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/**").authenticated()
+                .anyRequest().denyAll()
+        );
+        http.cors().configurationSource(corsConfigurationSource());
+        http.sessionManagement().sessionFixation().newSession();
+
+        return http.build();
     }
 
     @Bean
@@ -100,6 +98,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(errorPageFilter());
         filterRegistrationBean.setEnabled(false);
+
         return filterRegistrationBean;
     }
 
