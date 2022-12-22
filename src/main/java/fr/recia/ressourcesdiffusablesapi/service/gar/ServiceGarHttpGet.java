@@ -102,7 +102,6 @@ public class ServiceGarHttpGet implements ServiceGar {
     }
 
     private void verifValidite() {
-        if (log.isDebugEnabled()) log.debug("Check validity of file");
         if (this.dateTelechargement == null || SECONDS.between(this.dateTelechargement, LocalDateTime.now()) > this.cacheDuration) {
             this.telechargerFichier();
         }
