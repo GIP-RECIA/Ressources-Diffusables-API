@@ -19,6 +19,7 @@ spring:
   config.import: classpath:private.yml # Variables privées à ne pas diffuser.
 
 service-gar-http-get:
+  cache-duration: 86400 # 24h.
   ressources-diffusables-uri: '=== Ressources Diffusables URI ===' # Variable privée surchargée dans private.yml.
   download-location-path: 'src/main/resources/downloads/ressourcesDiffusables.json' # Le fichier sera toujours JSON.
 
@@ -28,9 +29,8 @@ security-configuration:
   cors:
     enable: true
     allow-credentials: true
-    allowed-origins: > # IP = PC de Anaël via VPN.
-      http://localhost:8080,
-      http://192.168.36.10:8080,
+    allowed-origins: >
+      http://localhost:5173,
       https://*.giprecia.net
     exposed-headers: >
       x-auth-token,

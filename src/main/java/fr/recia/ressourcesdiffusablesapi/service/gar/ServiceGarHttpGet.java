@@ -30,7 +30,10 @@ public class ServiceGarHttpGet implements ServiceGar {
     @Autowired
     private ServiceCacheHistorique serviceCacheHistorique;
 
-    @Value("${service-gar-http-get.ressources-diffusables-uri:}")
+    @Value("${service-gar-http-get.cache-duration}")
+    private int cacheDuration;
+
+    @Value("${service-gar-http-get.ressources-diffusables-uri}")
     private String ressourcesDiffusablesUri;
 
     @Value("${service-gar-http-get.download-location-path}")
@@ -99,7 +102,8 @@ public class ServiceGarHttpGet implements ServiceGar {
     }
 
     private void verifValidite() {
-        if (this.dateTelechargement == null || SECONDS.between(this.dateTelechargement, LocalDateTime.now()) > 86400) { // 24h.
+        if (log.isDebugEnabled()) log.debug("Check validity of file");
+        if (this.dateTelechargement == null || SECONDS.between(this.dateTelechargement, LocalDateTime.now()) > this.cacheDuration) {
             this.telechargerFichier();
         }
     }
