@@ -36,7 +36,7 @@ public class ServiceCacheHistoriqueJCache implements ServiceCacheHistorique {
         this.cache.put(filter, ressourcesDiffusables);
 
         // Mise à jour de la taille.
-        this.cache.forEach((entry) -> this.size++);
+        this.cache.forEach(entry -> this.size++);
     }
 
     @Override

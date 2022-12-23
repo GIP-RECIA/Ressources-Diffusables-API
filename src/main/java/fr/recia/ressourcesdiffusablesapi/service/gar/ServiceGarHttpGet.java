@@ -152,8 +152,10 @@ public class ServiceGarHttpGet implements ServiceGar {
     }
 
     private void lireFichier() {
-        if (log.isDebugEnabled()) log.debug("Reading of ressources diffusables source file: Starting reading procedure");
-        if (log.isDebugEnabled()) log.debug("Reading of ressources diffusables source file: file is at {}", this.ressourcesDiffusablesFile.getAbsolutePath());
+        if (log.isDebugEnabled()) {
+            log.debug("Reading of ressources diffusables source file: Starting reading procedure");
+            log.debug("Reading of ressources diffusables source file: file is at {}", this.ressourcesDiffusablesFile.getAbsolutePath());
+        }
 
         try {
             // Lecture du JSON.
@@ -164,7 +166,7 @@ public class ServiceGarHttpGet implements ServiceGar {
 
             // Récupération de la date de génération.
             LocalDateTime dateGeneration = LocalDateTime.parse(
-                    jsonNode.get("dateGeneration").asText().replaceAll(" ", ""),
+                    jsonNode.get("dateGeneration").asText().replace(" ", ""),
                     DateTimeFormatter.ISO_DATE_TIME
             );
             if (log.isDebugEnabled()) log.debug(

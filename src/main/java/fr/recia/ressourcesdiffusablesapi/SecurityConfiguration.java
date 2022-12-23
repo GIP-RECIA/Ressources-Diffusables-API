@@ -106,7 +106,7 @@ public class SecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        if (this.corsEnable) {
+        if (Boolean.TRUE.equals(this.corsEnable)) {
             if(log.isWarnEnabled()) log.warn("CORS ABILITATI! CORS est autorisé");
 
             final CorsConfiguration configuration = new CorsConfiguration();

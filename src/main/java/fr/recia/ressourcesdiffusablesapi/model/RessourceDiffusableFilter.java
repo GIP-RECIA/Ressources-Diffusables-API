@@ -120,6 +120,12 @@ public class RessourceDiffusableFilter implements Serializable {
                 .replaceAll("[^\\p{ASCII}]", "");
     }
 
+    private Boolean verification(String attribut, String argument) {
+        if (attribut != null)
+            return verification(unaccent(argument).toLowerCase(Locale.ROOT).contains(attribut));
+        return null;
+    }
+
     private Boolean verification(boolean assertion) {
         switch (this.operator) {
             case AND: return assertion ? null : false;
@@ -128,83 +134,43 @@ public class RessourceDiffusableFilter implements Serializable {
         }
     }
 
-    private boolean assertion(String argument, String attribut) {
-        return unaccent(argument).toLowerCase(Locale.ROOT).contains(attribut);
-    }
+    public boolean filter (RessourceDiffusable rd) {
+        Boolean result = verification(this.idRessource, rd.getRessource().getId());
+        if (result != null) return result;
 
-    public boolean filter(RessourceDiffusable rd) {
-        if (this.idRessource != null) {
-            Boolean verif = this.verification(this.assertion(rd.getRessource().getId(), this.idRessource));
-            if (verif != null) {
-                return verif;
-            }
-        }
+        result = verification(this.nomRessource, rd.getRessource().getNom());
+        if (result != null) return result;
 
-        if (this.nomRessource != null) {
-            Boolean verif = this.verification(this.assertion(rd.getRessource().getNom(), this.nomRessource));
-            if (verif != null) {
-                return verif;
-            }
-        }
+        result = verification(this.idEditeur, rd.getEditeur().getId());
+        if (result != null) return result;
 
-        if (this.idEditeur != null) {
-            Boolean verif = this.verification(this.assertion(rd.getEditeur().getId(), this.idEditeur));
-            if (verif != null) {
-                return verif;
-            }
-        }
-
-        if (this.nomEditeur != null) {
-            Boolean verif = this.verification(this.assertion(rd.getEditeur().getNom(), this.nomEditeur));
-            if (verif != null) {
-                return verif;
-            }
-        }
+        result = verification(this.nomEditeur, rd.getEditeur().getNom());
+        if (result != null) return result;
 
         if (this.distributeurCom != null || this.nomDistributeurCom != null) {
-            for (AttributRessource distributeurCom : rd.getDistributeursCom()) {
-                if (this.distributeurCom != null) {
-                    Boolean verif = this.verification(this.assertion(distributeurCom.getId(), this.distributeurCom));
-                    if (verif != null) {
-                        return verif;
-                    }
-                }
+            for (AttributRessource dc : rd.getDistributeursCom()) {
+                result = verification(this.distributeurCom, dc.getId());
+                if (result != null) return result;
 
-                if (this.nomDistributeurCom != null) {
-                    Boolean verif = this.verification(this.assertion(distributeurCom.getNom(), this.nomDistributeurCom));
-                    if (verif != null) {
-                        return verif;
-                    }
-                }
+                result = verification(this.nomDistributeurCom, dc.getNom());
+                if (result != null) return result;
             }
         }
 
-        if (this.distributeurTech != null) {
-            Boolean verif = this.verification(this.assertion(rd.getDistributeurTech().getId(), this.distributeurTech));
-            if (verif != null) {
-                return verif;
-            }
-        }
+        result = verification(this.distributeurTech, rd.getDistributeurTech().getId());
+        if (result != null) return result;
 
-        if (this.nomEditeur != null) {
-            Boolean verif = this.verification(this.assertion(rd.getEditeur().getNom(), this.nomEditeur));
-            if (verif != null) {
-                return verif;
-            }
-        }
+        result = verification(this.nomDistributeurTech, rd.getDistributeurTech().getNom());
+        if (result != null) return result;
 
         if (this.affichable != null) {
-            Boolean verif = this.verification(this.affichable != rd.isAffichable());
-            if (verif != null) {
-                return verif;
-            }
+            result = verification(this.affichable != rd.isAffichable());
+            if (result != null) return result;
         }
 
         if (this.diffusable != null) {
-            Boolean verif = this.verification(this.diffusable != rd.isDiffusable());
-            if (verif != null) {
-                return verif;
-            }
+            result = verification(this.diffusable != rd.isDiffusable());
+            if (result != null) return result;
         }
 
         switch (this.operator) {

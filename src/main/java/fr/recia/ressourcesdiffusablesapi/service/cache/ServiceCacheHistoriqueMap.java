@@ -14,7 +14,7 @@ public class ServiceCacheHistoriqueMap implements ServiceCacheHistorique {
     private final LinkedHashMap<RessourceDiffusableFilter, List<RessourceDiffusable>> historiqueRequetes = new LinkedHashMap<>() {
         @Override
         protected boolean removeEldestEntry(final Map.Entry eldest) {
-            return size() > 10;
+            return super.size() > 10;
         }
     };
 
