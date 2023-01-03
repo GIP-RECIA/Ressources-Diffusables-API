@@ -25,7 +25,8 @@ public class ServiceCacheHistoriqueMap implements ServiceCacheHistorique {
 
     @Override
     public void put(RessourceDiffusableFilter filter, List<RessourceDiffusable> ressourcesDiffusables) {
-        if(log.isDebugEnabled()) log.debug("Cache: Ressource diffusable put in history using HashMap; new size of history is " + this.historiqueRequetes.size());
+        if (log.isDebugEnabled())
+            log.debug("Cache: Ressource diffusable put in history using HashMap; new size of history is " + this.historiqueRequetes.size());
         this.historiqueRequetes.put(filter, ressourcesDiffusables);
     }
 

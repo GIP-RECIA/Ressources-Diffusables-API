@@ -10,7 +10,7 @@ import net.sf.ehcache.Element;
 import java.util.List;
 
 @Slf4j
-public class ServiceCacheHistoriqueEhcache implements ServiceCacheHistorique{
+public class ServiceCacheHistoriqueEhcache implements ServiceCacheHistorique {
 
     Cache cache = CacheManager.getInstance().getCache("cacheRessourcesDiffusables");
 
@@ -24,7 +24,8 @@ public class ServiceCacheHistoriqueEhcache implements ServiceCacheHistorique{
     @Override
     public void put(RessourceDiffusableFilter filter, List<RessourceDiffusable> ressourcesDiffusables) {
         this.cache.put(new Element(filter, ressourcesDiffusables));
-        if (log.isDebugEnabled()) log.debug("Cache: Ressource diffusable put in history using Ehcache; new size of history is " + this.cache.getSize());
+        if (log.isDebugEnabled())
+            log.debug("Cache: Ressource diffusable put in history using Ehcache; new size of history is " + this.cache.getSize());
     }
 
     @Override

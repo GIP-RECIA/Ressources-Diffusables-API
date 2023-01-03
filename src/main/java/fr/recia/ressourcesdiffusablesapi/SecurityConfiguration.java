@@ -61,7 +61,7 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        if(log.isDebugEnabled()) log.debug("configure signatureKey = {}", this.signatureKey);
+        if (log.isDebugEnabled()) log.debug("configure signatureKey = {}", this.signatureKey);
         final AbstractPreAuthenticatedProcessingFilter filter =
                 new SoffitApiPreAuthenticatedProcessingFilter(this.signatureKey);
 
@@ -107,7 +107,7 @@ public class SecurityConfiguration {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
         if (Boolean.TRUE.equals(this.corsEnable)) {
-            if(log.isWarnEnabled()) log.warn("CORS ABILITATI! CORS est autorisé");
+            if (log.isWarnEnabled()) log.warn("CORS ABILITATI! CORS est autorisé");
 
             final CorsConfiguration configuration = new CorsConfiguration();
 

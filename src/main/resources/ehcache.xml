@@ -4,7 +4,7 @@
         xsi:noNamespaceSchemaLocation="ehcache.xsd"
         updateCheck="true" monitoring="autodetect" dynamicConfig="true"
 >
-    <diskStore path="temp.io" />
+    <diskStore path="temp.io"/>
 
     <cache
             name="cacheRessourcesDiffusables"

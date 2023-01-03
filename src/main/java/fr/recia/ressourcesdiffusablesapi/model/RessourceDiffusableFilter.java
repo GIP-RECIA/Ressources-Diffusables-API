@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class RessourceDiffusableFilter implements Serializable {
 
-    private enum Operator { AND, OR }
+    private enum Operator {AND, OR}
     private final Operator operator;
     private final String idRessource;
     private final String nomRessource;
@@ -134,7 +134,7 @@ public class RessourceDiffusableFilter implements Serializable {
         }
     }
 
-    public boolean filter (RessourceDiffusable rd) {
+    public boolean filter(RessourceDiffusable rd) {
         Boolean result = verification(this.idRessource, rd.getRessource().getId());
         if (result != null) return result;
 
