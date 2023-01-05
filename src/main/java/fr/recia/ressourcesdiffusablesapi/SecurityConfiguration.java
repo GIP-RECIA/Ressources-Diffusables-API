@@ -34,7 +34,7 @@ public class SecurityConfiguration {
     private String signatureKey;
 
     @Value("${security-configuration.cors.enable}")
-    private Boolean corsEnable;
+    private boolean corsEnable;
 
     @Value("${security-configuration.cors.allow-credentials}")
     private Boolean corsAllowCredentials;
@@ -106,7 +106,7 @@ public class SecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        if (Boolean.TRUE.equals(this.corsEnable)) {
+        if (this.corsEnable) {
             if (log.isWarnEnabled()) log.warn("CORS ABILITATI! CORS est autorisé");
 
             final CorsConfiguration configuration = new CorsConfiguration();

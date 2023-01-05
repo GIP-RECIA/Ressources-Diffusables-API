@@ -31,6 +31,7 @@ security-configuration:
     allow-credentials: true
     allowed-origins: >
       http://localhost:5173,
+      http://10.209.28.14:5173,
       https://*.giprecia.net
     exposed-headers: >
       x-auth-token,

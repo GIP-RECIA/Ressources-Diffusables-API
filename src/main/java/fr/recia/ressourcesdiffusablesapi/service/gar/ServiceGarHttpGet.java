@@ -30,7 +30,7 @@ public class ServiceGarHttpGet implements ServiceGar {
     @Autowired
     private ServiceCacheHistorique serviceCacheHistorique;
 
-    @Value("${service-gar-http-get.cache-duration}")
+    @Value("${service-gar-http-get.cache-duration:86400}")
     private int cacheDuration;
 
     @Value("${service-gar-http-get.ressources-diffusables-uri}")
