@@ -13,4 +13,7 @@
 `./mvnw clean generate-sources` will generates new or modified Q__ classes or to update evaluator's entites when updating evaluator lib
 
 ## To see deprecated code and warnings
- `./mvnw compile -Dmaven.compiler.showWarnings=true -Dmaven.compiler.showDeprecation=true`
+`./mvnw compile -Dmaven.compiler.showWarnings=true -Dmaven.compiler.showDeprecation=true`
+
+## To update maven wrapper
+see official doc: https://maven.apache.org/wrapper/
