@@ -34,3 +34,5 @@ build/
 
 ### Cache ###
 temp.io/
+
+node_modules/

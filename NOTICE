@@ -38,6 +38,7 @@ This project includes:
   Jakarta Annotations API under EPL 2.0 or GPL2 w/ CPE
   Jakarta XML Binding API under Eclipse Distribution License - v 1.0
   JASYPT: Java Simplified Encryption under The Apache Software License, Version 2.0
+  javax.annotation API under CDDL + GPLv2 with classpath exception
   JJWT :: API under Apache License, Version 2.0
   JJWT :: Extensions :: Jackson under Apache License, Version 2.0
   JJWT :: Impl under Apache License, Version 2.0
