@@ -12,12 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.ressourcesdiffusablesapi;
+package fr.recia.ressourcesdiffusablesapi.configuration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.soffit.security.SoffitApiAuthenticationManager;
 import org.apereo.portal.soffit.security.SoffitApiPreAuthenticatedProcessingFilter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.support.ErrorPageFilter;
 import org.springframework.context.annotation.Bean;
@@ -32,38 +31,19 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.Filter;
-import java.util.List;
 
 @Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    @Value("${security-configuration.soffit.jwt.signatureKey:Changeme}")
-    private String signatureKey;
+    private final AppProperties appProperties;
 
-    @Value("${security-configuration.cors.enable}")
-    private boolean corsEnable;
-
-    @Value("${security-configuration.cors.allow-credentials}")
-    private Boolean corsAllowCredentials;
-
-    @Value("${security-configuration.cors.allowed-origins}")
-    private List<String> corsAllowedOrigins;
-
-    @Value("${security-configuration.cors.exposed-headers}")
-    private List<String> corsExposedHeaders;
-
-    @Value("${security-configuration.cors.allowed-headers}")
-    private List<String> corsAllowedHeaders;
-
-    @Value("${security-configuration.cors.allowed-methods}")
-    private List<String> corsAllowedMethods;
+    public SecurityConfiguration(AppProperties appProperties) {
+        this.appProperties = appProperties;
+    }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -75,9 +55,9 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        if (log.isDebugEnabled()) log.debug("configure signatureKey = {}", this.signatureKey);
-        final AbstractPreAuthenticatedProcessingFilter filter =
-                new SoffitApiPreAuthenticatedProcessingFilter(this.signatureKey);
+        final AbstractPreAuthenticatedProcessingFilter filter = new SoffitApiPreAuthenticatedProcessingFilter(
+                appProperties.getSoffit().getJwtSignatureKey()
+        );
 
         filter.setAuthenticationManager(authenticationManager());
 
@@ -87,7 +67,6 @@ public class SecurityConfiguration {
                 .antMatchers(HttpMethod.GET, "/api/**").authenticated()
                 .anyRequest().denyAll()
         );
-        http.cors().configurationSource(corsConfigurationSource());
         http.sessionManagement().sessionFixation().newSession();
 
         return http.build();
@@ -116,24 +95,4 @@ public class SecurityConfiguration {
         return filterRegistrationBean;
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        if (this.corsEnable) {
-            if (log.isWarnEnabled()) log.warn("CORS ABILITATI! CORS est autorisé");
-
-            final CorsConfiguration configuration = new CorsConfiguration();
-
-            configuration.setAllowCredentials(this.corsAllowCredentials);
-            configuration.setAllowedOrigins(this.corsAllowedOrigins);
-            configuration.setExposedHeaders(this.corsExposedHeaders);
-            configuration.setAllowedHeaders(this.corsAllowedHeaders);
-            configuration.setAllowedMethods(this.corsAllowedMethods);
-
-            source.registerCorsConfiguration("/**", configuration);
-        }
-
-        return source;
-    }
 }

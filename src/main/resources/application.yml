@@ -18,14 +18,15 @@ spring:
   cache.jcache.config: classpath:ehcache.xml
   config.import: classpath:private.yml # Variables privées à ne pas diffuser.
 
-service-gar-http-get:
-  cache-duration: 86400 # 24h.
-  ressources-diffusables-uri: '=== Ressources Diffusables URI ===' # Variable privée surchargée dans private.yml.
-  download-location-path: 'src/main/resources/downloads/ressourcesDiffusables.json' # Le fichier sera toujours JSON.
+app:
+  gar:
+    cache-duration: 86400 # 24h.
+    ressources-diffusables-uri: '=== Ressources Diffusables URI ===' # Variable privée surchargée dans private.yml.
+    download-location-path: 'src/main/resources/downloads/ressourcesDiffusables.json' # Le fichier sera toujours JSON.
 
-security-configuration:
   soffit:
-    jwt.signatureKey: '=== Signature Key ===' # Variable privée surchargée dans private.yml.
+    jwt-signature-key: '=== Signature Key ===' # Variable privée surchargée dans private.yml.
+
   cors:
     enable: true
     allow-credentials: true
@@ -45,5 +46,5 @@ security-configuration:
       x-auth-token,
       x-requested-with,
       x-xsrf-token
-    allowed-methods: > # Majuscules.
+    allowed-methods: >
       GET

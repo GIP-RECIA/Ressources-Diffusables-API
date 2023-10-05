@@ -17,13 +17,14 @@ package fr.recia.ressourcesdiffusablesapi.service.gar;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.recia.ressourcesdiffusablesapi.configuration.AppProperties;
+import fr.recia.ressourcesdiffusablesapi.configuration.beans.GARProperties;
 import fr.recia.ressourcesdiffusablesapi.model.AttributRessource;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusableFilter;
 import fr.recia.ressourcesdiffusablesapi.service.cache.ServiceCacheHistorique;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,7 +34,11 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
@@ -41,17 +46,10 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 @Slf4j
 public class ServiceGarHttpGet implements ServiceGar {
 
+    private final GARProperties garProperties;
+
     @Autowired
     private ServiceCacheHistorique serviceCacheHistorique;
-
-    @Value("${service-gar-http-get.cache-duration:86400}")
-    private int cacheDuration;
-
-    @Value("${service-gar-http-get.ressources-diffusables-uri}")
-    private String ressourcesDiffusablesUri;
-
-    @Value("${service-gar-http-get.download-location-path}")
-    private String downloadLocationPath;
 
     private final List<RessourceDiffusable> ressourcesDiffusablesComplet = new ArrayList<>();
 
@@ -62,6 +60,10 @@ public class ServiceGarHttpGet implements ServiceGar {
     private LocalDateTime dateTelechargement = null;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public ServiceGarHttpGet(AppProperties appProperties) {
+        this.garProperties = appProperties.getGar();
+    }
 
     @Override
     public int getSize(RessourceDiffusableFilter filter) {
@@ -94,9 +96,7 @@ public class ServiceGarHttpGet implements ServiceGar {
             } else {
                 List<RessourceDiffusable> ressourcesDiffusablesFiltrees = new ArrayList<>();
                 for (RessourceDiffusable ressourceDiffusable : this.ressourcesDiffusablesComplet) {
-                    if (filter.filter(ressourceDiffusable)) {
-                        ressourcesDiffusablesFiltrees.add(ressourceDiffusable);
-                    }
+                    if (filter.filter(ressourceDiffusable)) ressourcesDiffusablesFiltrees.add(ressourceDiffusable);
                 }
                 this.serviceCacheHistorique.put(filter, ressourcesDiffusablesFiltrees);
                 return ressourcesDiffusablesFiltrees;
@@ -117,7 +117,7 @@ public class ServiceGarHttpGet implements ServiceGar {
     }
 
     private void verifValidite() {
-        if (this.dateTelechargement == null || SECONDS.between(this.dateTelechargement, LocalDateTime.now()) > this.cacheDuration) {
+        if (this.dateTelechargement == null || SECONDS.between(this.dateTelechargement, LocalDateTime.now()) > garProperties.getCacheDuration()) {
             this.telechargerFichier();
         }
     }
@@ -127,24 +127,20 @@ public class ServiceGarHttpGet implements ServiceGar {
             // Début du téléchargement.
             if (log.isInfoEnabled())
                 log.info("Ressources diffusables source file download: Starting download procedure");
-            if (log.isDebugEnabled())
-                log.debug("Ressources diffusables source file download: URL is {}", this.ressourcesDiffusablesUri);
 
             // Identification du fichier.
-            if (this.ressourcesDiffusablesFile == null) {
-                this.ressourcesDiffusablesFile = new File(this.downloadLocationPath);
-            }
+            if (this.ressourcesDiffusablesFile == null)
+                this.ressourcesDiffusablesFile = new File(garProperties.getDownloadLocationPath());
 
             // Création du répertoire parent s'il n'existe pas.
-            if (!this.ressourcesDiffusablesFile.getParentFile().exists()) {
+            if (!this.ressourcesDiffusablesFile.getParentFile().exists())
                 this.ressourcesDiffusablesFile.getParentFile().mkdirs();
-            }
 
             // Téléchargement du fichier.
-            new FileOutputStream(this.downloadLocationPath)
+            new FileOutputStream(garProperties.getDownloadLocationPath())
                     .getChannel()
                     .transferFrom(
-                            Channels.newChannel(new URL(this.ressourcesDiffusablesUri).openStream()),
+                            Channels.newChannel(new URL(garProperties.getRessourcesDiffusablesUri()).openStream()),
                             0,
                             Long.MAX_VALUE
                     );
@@ -197,9 +193,8 @@ public class ServiceGarHttpGet implements ServiceGar {
                 if (log.isDebugEnabled())
                     log.debug("Reading of ressources diffusables source file: The file that has been previously read and the file currently read are the same; stopping the reading procedure");
                 return;
-            } else {
-                this.dateGeneration = dateGeneration;
-            }
+            } else this.dateGeneration = dateGeneration;
+
 
             // Ouverture de l'objet des ressources diffusables.
             jsonNode = jsonNode.get("ressourceDiffusable");
@@ -215,23 +210,17 @@ public class ServiceGarHttpGet implements ServiceGar {
                 // Vérification que ce n'est pas une "mère de famille".
                 // Selon le standard, une ressource "mère de famille" est une ressource virtuelle qui est connectée
                 // à d'autres ressources dites "membres de famille". Au final ce n'est pas une vraie ressource.
-                if (ressourceDiffusableJson.has("mereFamille")) {
-                    continue;
-                }
+                if (ressourceDiffusableJson.has("mereFamille")) continue;
 
                 // Nom et ID de la ressource.
                 String idRessource = ressourceDiffusableJson.get("idRessource").asText();
                 JsonNode nomRessourceJson = ressourceDiffusableJson.get("nomRessource");
-                if (nomRessourceJson != null) {
-                    attributsPseudoCache.put(idRessource, nomRessourceJson.asText());
-                }
+                if (nomRessourceJson != null) attributsPseudoCache.put(idRessource, nomRessourceJson.asText());
 
                 // Nom et ID de l'éditeur.
                 String idEditeur = ressourceDiffusableJson.get("idEditeur").asText();
                 JsonNode nomEditeurJson = ressourceDiffusableJson.get("nomEditeur");
-                if (nomEditeurJson != null) {
-                    attributsPseudoCache.put(idEditeur, nomEditeurJson.asText());
-                }
+                if (nomEditeurJson != null) attributsPseudoCache.put(idEditeur, nomEditeurJson.asText());
 
                 // Récupération du node JSON des distributeurs com.
                 JsonNode distributeursComJson = ressourceDiffusableJson.get("distributeursCom");
@@ -244,9 +233,8 @@ public class ServiceGarHttpGet implements ServiceGar {
                     // Nom et ID du distributeur com.
                     String idDistributeurCom = distributeursComJson.get(j).get("distributeurCom").asText();
                     JsonNode nomDistributeurComJson = distributeursComJson.get(j).get("nomDistributeurCom");
-                    if (nomDistributeurComJson != null) {
+                    if (nomDistributeurComJson != null)
                         attributsPseudoCache.put(idDistributeurCom, nomDistributeurComJson.asText());
-                    }
 
                     // On ajoute le distributeur com à la liste des distributeurs com à ajouter.
                     listeIdDistributeurCom.add(idDistributeurCom);
@@ -255,9 +243,8 @@ public class ServiceGarHttpGet implements ServiceGar {
                 // Nom et ID de l'éditeur.
                 String idDistributeurTech = ressourceDiffusableJson.get("distributeurTech").asText();
                 JsonNode nomDistributeurTech = ressourceDiffusableJson.get("nomDistributeurTech");
-                if (nomDistributeurTech != null) {
+                if (nomDistributeurTech != null)
                     attributsPseudoCache.put(idDistributeurTech, nomDistributeurTech.asText());
-                }
 
                 // Est-ce que la ressource est affichable ?
                 boolean affichable = ressourceDiffusableJson.get("affichable").asBoolean();
