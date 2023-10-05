@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2021 GIP-RECIA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,9 @@ package fr.recia.ressourcesdiffusablesapi.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,4 +32,5 @@ public class HealthCheckController {
     public void healthCheck(HttpServletRequest request, HttpServletResponse response) {
         if (log.isDebugEnabled()) log.debug("Health check. HTTP 200: OK.");
     }
+
 }

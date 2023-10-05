@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2021 GIP-RECIA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,4 +33,5 @@ public class ApiError {
     public String getExceptionLocalizedMessage() {
         return this.exception.getLocalizedMessage();
     }
+
 }

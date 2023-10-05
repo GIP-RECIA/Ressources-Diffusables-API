@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2021 GIP-RECIA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,18 +34,14 @@ public class ServiceGarStatique implements ServiceGar {
 
     @Override
     public int getPageCount(int elementsParPage, RessourceDiffusableFilter filter) {
-        if (this.ressourcesDiffusablesComplet.isEmpty()) {
-            this.initialize();
-        }
+        if (this.ressourcesDiffusablesComplet.isEmpty()) this.initialize();
 
         if (filter.isEmpty()) {
             return (int) Math.ceil(this.ressourcesDiffusablesComplet.size() / (double) elementsParPage);
         } else {
             List<RessourceDiffusable> ressourcesDiffusablesFiltrees = new ArrayList<>();
             for (RessourceDiffusable ressourceDiffusable : this.ressourcesDiffusablesComplet) {
-                if (filter.filter(ressourceDiffusable)) {
-                    ressourcesDiffusablesFiltrees.add(ressourceDiffusable);
-                }
+                if (filter.filter(ressourceDiffusable)) ressourcesDiffusablesFiltrees.add(ressourceDiffusable);
             }
 
             return (int) Math.ceil(ressourcesDiffusablesFiltrees.size() / (double) elementsParPage);
@@ -54,15 +50,11 @@ public class ServiceGarStatique implements ServiceGar {
 
     @Override
     public Collection<RessourceDiffusable> getRessourcesDiffusables(int page, int elementsParPage, RessourceDiffusableFilter filter) {
-        if (this.ressourcesDiffusablesComplet.isEmpty()) {
-            this.initialize();
-        }
+        if (this.ressourcesDiffusablesComplet.isEmpty()) this.initialize();
 
         List<RessourceDiffusable> ressourcesDiffusablesFiltrees = new ArrayList<>();
         for (RessourceDiffusable ressourceDiffusable : this.ressourcesDiffusablesComplet) {
-            if (filter.filter(ressourceDiffusable)) {
-                ressourcesDiffusablesFiltrees.add(ressourceDiffusable);
-            }
+            if (filter.filter(ressourceDiffusable)) ressourcesDiffusablesFiltrees.add(ressourceDiffusable);
         }
 
         return ressourcesDiffusablesFiltrees;
@@ -89,4 +81,5 @@ public class ServiceGarStatique implements ServiceGar {
     private void ajouterRessource(RessourceDiffusable ressourceDiffusable) {
         this.ressourcesDiffusablesComplet.add(ressourceDiffusable);
     }
+
 }

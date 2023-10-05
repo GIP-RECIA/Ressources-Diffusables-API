@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2021 GIP-RECIA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -134,12 +134,14 @@ public class RessourceDiffusableFilter implements Serializable {
                 .replaceAll("[^\\p{ASCII}]", "");
     }
 
+    @SuppressWarnings("java:S2447")
     private Boolean verification(String attribut, String argument) {
         if (attribut != null)
             return verification(unaccent(argument).toLowerCase(Locale.ROOT).contains(attribut));
         return null;
     }
 
+    @SuppressWarnings("java:S2447")
     private Boolean verification(boolean assertion) {
         switch (this.operator) {
             case AND: return assertion ? null : false;

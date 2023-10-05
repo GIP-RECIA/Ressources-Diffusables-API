@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2021 GIP-RECIA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,4 +50,5 @@ public interface ServiceCacheHistorique {
      * Vide entièrement le cache en supprimant toutes les listes de ressources diffusables qu'il contient.
      */
     void clear();
+
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2021 GIP-RECIA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,4 +48,5 @@ public class AttributRessource implements Serializable {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }

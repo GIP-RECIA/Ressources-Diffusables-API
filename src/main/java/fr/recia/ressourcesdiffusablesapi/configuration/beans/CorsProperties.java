@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2021 GIP-RECIA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,31 +26,31 @@ import static fr.recia.ressourcesdiffusablesapi.configuration.Constants.PROPERTI
 @Data
 public class CorsProperties {
 
-  private boolean enable;
-  private boolean allowCredentials;
-  private List<String> allowedOrigins;
-  private List<String> exposedHeaders;
-  private List<String> allowedHeaders;
-  private List<String> allowedMethods;
+    private boolean enable;
+    private boolean allowCredentials;
+    private List<String> allowedOrigins;
+    private List<String> exposedHeaders;
+    private List<String> allowedHeaders;
+    private List<String> allowedMethods;
 
-  @Override
-  public String toString() {
-    return "\"CorsProperties\": {" +
-      "\n\t\"enable\": " + enable +
-      ",\n\t\"allowCredentials\": " + allowCredentials +
-      ",\n\t\"allowedOrigins\": " + allowedOrigins.stream()
-      .map(String::valueOf)
-      .collect(Collectors.joining(PROPERTIES_TO_JSON_DELIMITER, PROPERTIES_TO_JSON_PREFIX, PROPERTIES_TO_JSON_SUFFIX)) +
-      ",\n\t\"exposedHeaders\": " + exposedHeaders.stream()
-      .map(String::valueOf)
-      .collect(Collectors.joining(PROPERTIES_TO_JSON_DELIMITER, PROPERTIES_TO_JSON_PREFIX, PROPERTIES_TO_JSON_SUFFIX)) +
-      ",\n\t\"allowedHeaders\": " + allowedHeaders.stream()
-      .map(String::valueOf)
-      .collect(Collectors.joining(PROPERTIES_TO_JSON_DELIMITER, PROPERTIES_TO_JSON_PREFIX, PROPERTIES_TO_JSON_SUFFIX)) +
-      ",\n\t\"allowedMethods\": " + allowedMethods.stream()
-      .map(String::valueOf)
-      .collect(Collectors.joining(PROPERTIES_TO_JSON_DELIMITER, PROPERTIES_TO_JSON_PREFIX, PROPERTIES_TO_JSON_SUFFIX)) +
-      "\n}";
-  }
+    @Override
+    public String toString() {
+        return "\"CorsProperties\": {" +
+                "\n\t\"enable\": " + enable +
+                ",\n\t\"allowCredentials\": " + allowCredentials +
+                ",\n\t\"allowedOrigins\": " + allowedOrigins.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(PROPERTIES_TO_JSON_DELIMITER, PROPERTIES_TO_JSON_PREFIX, PROPERTIES_TO_JSON_SUFFIX)) +
+                ",\n\t\"exposedHeaders\": " + exposedHeaders.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(PROPERTIES_TO_JSON_DELIMITER, PROPERTIES_TO_JSON_PREFIX, PROPERTIES_TO_JSON_SUFFIX)) +
+                ",\n\t\"allowedHeaders\": " + allowedHeaders.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(PROPERTIES_TO_JSON_DELIMITER, PROPERTIES_TO_JSON_PREFIX, PROPERTIES_TO_JSON_SUFFIX)) +
+                ",\n\t\"allowedMethods\": " + allowedMethods.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(PROPERTIES_TO_JSON_DELIMITER, PROPERTIES_TO_JSON_PREFIX, PROPERTIES_TO_JSON_SUFFIX)) +
+                "\n}";
+    }
 
 }

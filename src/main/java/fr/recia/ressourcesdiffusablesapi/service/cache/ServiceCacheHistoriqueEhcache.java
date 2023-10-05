@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2021 GIP-RECIA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,4 +53,5 @@ public class ServiceCacheHistoriqueEhcache implements ServiceCacheHistorique {
         this.cache.removeAll();
         if (log.isDebugEnabled()) log.debug("Cache: History cleared using Ehcache; " + count + " elements removed");
     }
+
 }

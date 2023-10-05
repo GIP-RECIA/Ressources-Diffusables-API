@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2021 GIP-RECIA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -117,9 +117,8 @@ public class ServiceGarHttpGet implements ServiceGar {
     }
 
     private void verifValidite() {
-        if (this.dateTelechargement == null || SECONDS.between(this.dateTelechargement, LocalDateTime.now()) > garProperties.getCacheDuration()) {
+        if (this.dateTelechargement == null || SECONDS.between(this.dateTelechargement, LocalDateTime.now()) > garProperties.getCacheDuration())
             this.telechargerFichier();
-        }
     }
 
     private void telechargerFichier() {

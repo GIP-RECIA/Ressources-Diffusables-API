@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2021 GIP-RECIA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,8 +27,8 @@ public class GARProperties {
     public String toString() {
         return "\"GARProperties\": {" +
                 "\n\t\"cacheDuration\": " + cacheDuration +
-                "\n\t\"ressourcesDiffusablesUri\": " + ressourcesDiffusablesUri +
-                "\n\t\"downloadLocationPath\": " + downloadLocationPath +
+                "\n\t\"ressourcesDiffusablesUri\": \"" + ressourcesDiffusablesUri + "\"" +
+                "\n\t\"downloadLocationPath\": \"" + downloadLocationPath + "\"" +
                 "\n}";
     }
 

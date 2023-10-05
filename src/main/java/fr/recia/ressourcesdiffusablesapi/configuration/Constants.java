@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2021 GIP-RECIA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,12 @@ package fr.recia.ressourcesdiffusablesapi.configuration;
 
 public class Constants {
 
-  public static final String PROPERTIES_TO_JSON_DELIMITER = "\", \"";
-  public static final String PROPERTIES_TO_JSON_PREFIX = "[ \"";
-  public static final String PROPERTIES_TO_JSON_SUFFIX = "\" ]";
+    private Constants() {
+        throw new IllegalStateException("Constants class");
+    }
+
+    public static final String PROPERTIES_TO_JSON_DELIMITER = "\", \"";
+    public static final String PROPERTIES_TO_JSON_PREFIX = "[ \"";
+    public static final String PROPERTIES_TO_JSON_SUFFIX = "\" ]";
 
 }
