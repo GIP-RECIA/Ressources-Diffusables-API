@@ -1,3 +1,10 @@
+spring:
+  config:
+    activate:
+      on-profile: 'default-config'
+
+---
+
 server:
   port: 8090
   servlet:
@@ -9,23 +16,28 @@ server:
     include-message: always
     include-stacktrace: always
 
-#logging:
-#  level:
-#    web: DEBUG
-#    fr: DEBUG
+logging:
+  config: "classpath:logback.xml"
 
 spring:
+  profiles:
+    active: @spring.profiles.active@
+    group:
+      dev: dev
+      test: test
+      prod: prod
+      ci: test
+
   cache.jcache.config: classpath:ehcache.xml
-  config.import: classpath:private.yml # Variables privées à ne pas diffuser.
 
 app:
   gar:
     cache-duration: 86400 # 24h.
-    ressources-diffusables-uri: '=== Ressources Diffusables URI ===' # Variable privée surchargée dans private.yml.
+    ressources-diffusables-uri: '=== Ressources Diffusables URI ==='
     download-location-path: 'src/main/resources/downloads/ressourcesDiffusables.json' # Le fichier sera toujours JSON.
 
   soffit:
-    jwt-signature-key: '=== Signature Key ===' # Variable privée surchargée dans private.yml.
+    jwt-signature-key: '=== Signature Key ==='
 
   cors:
     enable: true

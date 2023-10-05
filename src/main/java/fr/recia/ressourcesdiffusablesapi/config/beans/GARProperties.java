@@ -12,16 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.ressourcesdiffusablesapi.configuration;
+package fr.recia.ressourcesdiffusablesapi.config.beans;
 
-public class Constants {
+import lombok.Data;
 
-    private Constants() {
-        throw new IllegalStateException("Constants class");
+@Data
+public class GARProperties {
+
+    private Long cacheDuration;
+    private String ressourcesDiffusablesUri;
+    private String downloadLocationPath;
+
+    @Override
+    public String toString() {
+        return "\"GARProperties\": {" +
+                "\n\t\"cacheDuration\": " + cacheDuration +
+                "\n\t\"ressourcesDiffusablesUri\": \"" + ressourcesDiffusablesUri + "\"" +
+                "\n\t\"downloadLocationPath\": \"" + downloadLocationPath + "\"" +
+                "\n}";
     }
-
-    public static final String PROPERTIES_TO_JSON_DELIMITER = "\", \"";
-    public static final String PROPERTIES_TO_JSON_PREFIX = "[ \"";
-    public static final String PROPERTIES_TO_JSON_SUFFIX = "\" ]";
 
 }

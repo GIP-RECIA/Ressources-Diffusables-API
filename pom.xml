@@ -143,4 +143,52 @@
         </plugins>
     </build>
 
+    <scm>
+        <connection>scm:git:ssh://git@github.com:GIP-RECIA/Ressources-Diffusables-API.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:GIP-RECIA/Ressources-Diffusables-API.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/GIP-RECIA/Ressources-Diffusables-API.git</url>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>esco-releases</id>
+            <url>https://nexus.recia.dev/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>esco-snapshots</id>
+            <url>https://nexus.recia.dev/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <spring.profiles.active>test</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>ci</id>
+            <properties>
+                <spring.profiles.active>test</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>

@@ -1,0 +1,15 @@
+server:
+  servlet:
+    context-path: /
+
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+
+app:
+  gar:
+    ressources-diffusables-uri: ''
+
+  soffit:
+    jwt-signature-key: ''

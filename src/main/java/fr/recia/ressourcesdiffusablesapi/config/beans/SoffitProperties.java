@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.ressourcesdiffusablesapi.configuration.beans;
+package fr.recia.ressourcesdiffusablesapi.config.beans;
 
 import lombok.Data;
 

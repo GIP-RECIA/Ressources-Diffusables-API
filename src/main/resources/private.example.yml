@@ -1,6 +1,0 @@
-app:
-  gar:
-    ressources-diffusables-uri: ''
-
-  soffit:
-    jwt-signature-key: ''

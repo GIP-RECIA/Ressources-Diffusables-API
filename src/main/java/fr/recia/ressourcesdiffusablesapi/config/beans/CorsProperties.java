@@ -12,16 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.ressourcesdiffusablesapi.configuration.beans;
+package fr.recia.ressourcesdiffusablesapi.config.beans;
 
 import lombok.Data;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static fr.recia.ressourcesdiffusablesapi.configuration.Constants.PROPERTIES_TO_JSON_DELIMITER;
-import static fr.recia.ressourcesdiffusablesapi.configuration.Constants.PROPERTIES_TO_JSON_PREFIX;
-import static fr.recia.ressourcesdiffusablesapi.configuration.Constants.PROPERTIES_TO_JSON_SUFFIX;
+import static fr.recia.ressourcesdiffusablesapi.config.Constants.PROPERTIES_TO_JSON_DELIMITER;
+import static fr.recia.ressourcesdiffusablesapi.config.Constants.PROPERTIES_TO_JSON_PREFIX;
+import static fr.recia.ressourcesdiffusablesapi.config.Constants.PROPERTIES_TO_JSON_SUFFIX;
 
 @Data
 public class CorsProperties {

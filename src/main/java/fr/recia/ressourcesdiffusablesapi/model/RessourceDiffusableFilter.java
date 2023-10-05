@@ -22,6 +22,7 @@ import java.util.Objects;
 public class RessourceDiffusableFilter implements Serializable {
 
     private enum Operator {AND, OR}
+
     private final Operator operator;
     private final String idRessource;
     private final String nomRessource;
@@ -144,9 +145,12 @@ public class RessourceDiffusableFilter implements Serializable {
     @SuppressWarnings("java:S2447")
     private Boolean verification(boolean assertion) {
         switch (this.operator) {
-            case AND: return assertion ? null : false;
-            case OR: return assertion ? true : null;
-            default: return null;
+            case AND:
+                return assertion ? null : false;
+            case OR:
+                return assertion ? true : null;
+            default:
+                return null;
         }
     }
 
@@ -190,9 +194,12 @@ public class RessourceDiffusableFilter implements Serializable {
         }
 
         switch (this.operator) {
-            case AND: return true;
-            case OR: return false;
-            default: return true;
+            case AND:
+                return true;
+            case OR:
+                return false;
+            default:
+                return true;
         }
     }
 

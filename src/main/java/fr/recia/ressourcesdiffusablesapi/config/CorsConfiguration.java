@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.ressourcesdiffusablesapi.configuration;
+package fr.recia.ressourcesdiffusablesapi.config;
 
-import fr.recia.ressourcesdiffusablesapi.configuration.beans.CorsProperties;
+import fr.recia.ressourcesdiffusablesapi.config.beans.CorsProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
