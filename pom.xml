@@ -145,7 +145,7 @@
 
     <scm>
         <connection>scm:git:ssh://git@github.com:GIP-RECIA/Ressources-Diffusables-API.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:GIP-RECIA/Ressources-Diffusables-API.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@github.com/GIP-RECIA/Ressources-Diffusables-API.git</developerConnection>
         <tag>HEAD</tag>
         <url>https://github.com/GIP-RECIA/Ressources-Diffusables-API.git</url>
     </scm>
