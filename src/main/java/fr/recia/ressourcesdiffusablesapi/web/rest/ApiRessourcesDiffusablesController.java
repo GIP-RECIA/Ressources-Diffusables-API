@@ -1,3 +1,17 @@
+/*
+ * Copyright (C) 2021 GIP-RECIA, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *                 http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package fr.recia.ressourcesdiffusablesapi.web.rest;
 
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusableFilter;
@@ -8,7 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,30 +37,29 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping(path = "api/")
 public class ApiRessourcesDiffusablesController {
-    // Attributs
+
     @Autowired
     private ServiceGar serviceGar;
 
-    // Méthodes
     @GetMapping(value = "/ressources-diffusables")
     public ApiResponse ressourcesDiffusables(
             @RequestParam(value = "page") final int page,
             @RequestParam(value = "operator", required = false) final String operator,
             @RequestParam(value = "idRessource", required = false) final String idRessource,
-            @RequestParam(value = "nomRessource", required = false)  final String nomRessource,
+            @RequestParam(value = "nomRessource", required = false) final String nomRessource,
             @RequestParam(value = "idEditeur", required = false) final String idEditeur,
-            @RequestParam(value = "nomEditeur", required = false)  final String nomEditeur,
+            @RequestParam(value = "nomEditeur", required = false) final String nomEditeur,
             @RequestParam(value = "distributeurCom", required = false) final String distributeurCom,
-            @RequestParam(value = "nomDistributeurCom", required = false)  final String nomDistributeurCom,
+            @RequestParam(value = "nomDistributeurCom", required = false) final String nomDistributeurCom,
             @RequestParam(value = "distributeurTech", required = false) final String distributeurTech,
-            @RequestParam(value = "nomDistributeurTech", required = false)  final String nomDistributeurTech,
+            @RequestParam(value = "nomDistributeurTech", required = false) final String nomDistributeurTech,
             @RequestParam(value = "affichable", required = false) final Boolean affichable,
             @RequestParam(value = "diffusable", required = false) final Boolean diffusable,
             @RequestParam(value = "ressourcesPerPage", defaultValue = "32") final int elementsParPage,
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        if(log.isDebugEnabled()) log.debug("Ressources diffusables request.");
+        if (log.isDebugEnabled()) log.debug("Ressources diffusables request.");
         return new ApiResponse(
                 "Ressources diffusables request successful.",
                 this.serviceGar.getRessourcesDiffusables(
@@ -68,20 +86,20 @@ public class ApiRessourcesDiffusablesController {
     public ApiResponse pageCount(
             @RequestParam(value = "operator", required = false) final String operator,
             @RequestParam(value = "idRessource", required = false) final String idRessource,
-            @RequestParam(value = "nomRessource", required = false)  final String nomRessource,
+            @RequestParam(value = "nomRessource", required = false) final String nomRessource,
             @RequestParam(value = "idEditeur", required = false) final String idEditeur,
-            @RequestParam(value = "nomEditeur", required = false)  final String nomEditeur,
+            @RequestParam(value = "nomEditeur", required = false) final String nomEditeur,
             @RequestParam(value = "distributeurCom", required = false) final String distributeurCom,
-            @RequestParam(value = "nomDistributeurCom", required = false)  final String nomDistributeurCom,
+            @RequestParam(value = "nomDistributeurCom", required = false) final String nomDistributeurCom,
             @RequestParam(value = "distributeurTech", required = false) final String distributeurTech,
-            @RequestParam(value = "nomDistributeurTech", required = false)  final String nomDistributeurTech,
+            @RequestParam(value = "nomDistributeurTech", required = false) final String nomDistributeurTech,
             @RequestParam(value = "affichable", required = false) final Boolean affichable,
             @RequestParam(value = "diffusable", required = false) final Boolean diffusable,
             @RequestParam(value = "ressourcesPerPage", defaultValue = "32") final int elementsParPage,
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        if(log.isDebugEnabled()) log.debug("Nombre pages ressources diffusables request.");
+        if (log.isDebugEnabled()) log.debug("Nombre pages ressources diffusables request.");
         return new ApiResponse(
                 "Ressources diffusables page count request successful.",
                 this.serviceGar.getPageCount(
@@ -107,19 +125,19 @@ public class ApiRessourcesDiffusablesController {
     public ApiResponse size(
             @RequestParam(value = "operator", required = false) final String operator,
             @RequestParam(value = "idRessource", required = false) final String idRessource,
-            @RequestParam(value = "nomRessource", required = false)  final String nomRessource,
+            @RequestParam(value = "nomRessource", required = false) final String nomRessource,
             @RequestParam(value = "idEditeur", required = false) final String idEditeur,
-            @RequestParam(value = "nomEditeur", required = false)  final String nomEditeur,
+            @RequestParam(value = "nomEditeur", required = false) final String nomEditeur,
             @RequestParam(value = "distributeurCom", required = false) final String distributeurCom,
-            @RequestParam(value = "nomDistributeurCom", required = false)  final String nomDistributeurCom,
+            @RequestParam(value = "nomDistributeurCom", required = false) final String nomDistributeurCom,
             @RequestParam(value = "distributeurTech", required = false) final String distributeurTech,
-            @RequestParam(value = "nomDistributeurTech", required = false)  final String nomDistributeurTech,
+            @RequestParam(value = "nomDistributeurTech", required = false) final String nomDistributeurTech,
             @RequestParam(value = "affichable", required = false) final Boolean affichable,
             @RequestParam(value = "diffusable", required = false) final Boolean diffusable,
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        if(log.isDebugEnabled()) log.debug("Nombre éléments ressources diffusables request.");
+        if (log.isDebugEnabled()) log.debug("Nombre éléments ressources diffusables request.");
         return new ApiResponse(
                 "Ressources diffusables list size request successful.",
                 this.serviceGar.getSize(
@@ -156,9 +174,7 @@ public class ApiRessourcesDiffusablesController {
         );
     }
 
-    @ExceptionHandler(
-            Exception.class
-    )
+    @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
     public ApiResponse handleExceptionElse(
             HttpServletRequest request,
@@ -170,4 +186,5 @@ public class ApiRessourcesDiffusablesController {
                 new ApiError(exception)
         );
     }
+
 }

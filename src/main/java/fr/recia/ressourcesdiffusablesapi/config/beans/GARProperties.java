@@ -12,26 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.ressourcesdiffusablesapi.model.apiresponse;
+package fr.recia.ressourcesdiffusablesapi.config.beans;
 
-public class ApiError {
+import lombok.Data;
 
-    private final Throwable exception;
+@Data
+public class GARProperties {
 
-    public ApiError(Throwable exception) {
-        this.exception = exception;
-    }
+    private Long cacheDuration;
+    private String ressourcesDiffusablesUri;
+    private String downloadLocationPath;
 
-    public String getExceptionName() {
-        return this.exception.getClass().getSimpleName();
-    }
-
-    public String getExceptionMessage() {
-        return this.exception.getMessage();
-    }
-
-    public String getExceptionLocalizedMessage() {
-        return this.exception.getLocalizedMessage();
+    @Override
+    public String toString() {
+        return "\"GARProperties\": {" +
+                "\n\t\"cacheDuration\": " + cacheDuration +
+                "\n\t\"ressourcesDiffusablesUri\": \"" + ressourcesDiffusablesUri + "\"" +
+                "\n\t\"downloadLocationPath\": \"" + downloadLocationPath + "\"" +
+                "\n}";
     }
 
 }

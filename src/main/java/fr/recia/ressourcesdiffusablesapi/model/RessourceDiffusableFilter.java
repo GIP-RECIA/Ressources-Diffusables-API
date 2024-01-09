@@ -1,3 +1,17 @@
+/*
+ * Copyright (C) 2021 GIP-RECIA, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *                 http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package fr.recia.ressourcesdiffusablesapi.model;
 
 import java.io.Serializable;
@@ -6,8 +20,9 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class RessourceDiffusableFilter implements Serializable {
-    // Attributs
-    private enum Operator { AND, OR }
+
+    private enum Operator {AND, OR}
+
     private final Operator operator;
     private final String idRessource;
     private final String nomRessource;
@@ -20,7 +35,6 @@ public class RessourceDiffusableFilter implements Serializable {
     private final Boolean affichable;
     private final Boolean diffusable;
 
-    // Constructeurs
     public RessourceDiffusableFilter(
             String operator,
             String idRessource,
@@ -47,7 +61,6 @@ public class RessourceDiffusableFilter implements Serializable {
         this.diffusable = diffusable;
     }
 
-    // Getteurs
     public Operator getOperator() {
         return this.operator;
     }
@@ -92,13 +105,13 @@ public class RessourceDiffusableFilter implements Serializable {
         return this.diffusable;
     }
 
-    // Méthodes
     private static Operator operatorByName(String name) {
         for (Operator operator : Operator.values()) {
             if (name.equals(operator.name())) {
                 return operator;
             }
         }
+
         return Operator.AND;
     }
 
@@ -107,6 +120,7 @@ public class RessourceDiffusableFilter implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RessourceDiffusableFilter that = (RessourceDiffusableFilter) o;
+
         return operator == that.operator && Objects.equals(idRessource, that.idRessource) && Objects.equals(nomRessource, that.nomRessource) && Objects.equals(idEditeur, that.idEditeur) && Objects.equals(nomEditeur, that.nomEditeur) && Objects.equals(distributeurCom, that.distributeurCom) && Objects.equals(nomDistributeurCom, that.nomDistributeurCom) && Objects.equals(distributeurTech, that.distributeurTech) && Objects.equals(nomDistributeurTech, that.nomDistributeurTech) && Objects.equals(affichable, that.affichable) && Objects.equals(diffusable, that.diffusable);
     }
 
@@ -121,97 +135,71 @@ public class RessourceDiffusableFilter implements Serializable {
                 .replaceAll("[^\\p{ASCII}]", "");
     }
 
-    private Boolean verification(boolean assertion) {
-        switch (this.operator) {
-            case AND: return assertion ? null : false;
-            case OR: return assertion ? true : null;
-            default: return null;
-        }
+    @SuppressWarnings("java:S2447")
+    private Boolean verification(String attribut, String argument) {
+        if (attribut != null)
+            return verification(unaccent(argument).toLowerCase(Locale.ROOT).contains(attribut));
+        return null;
     }
 
-    private boolean assertion(String argument, String attribut) {
-        return unaccent(argument).toLowerCase(Locale.ROOT).contains(attribut);
+    @SuppressWarnings("java:S2447")
+    private Boolean verification(boolean assertion) {
+        switch (this.operator) {
+            case AND:
+                return assertion ? null : false;
+            case OR:
+                return assertion ? true : null;
+            default:
+                return null;
+        }
     }
 
     public boolean filter(RessourceDiffusable rd) {
-        if (this.idRessource != null) {
-            Boolean verif = this.verification(this.assertion(rd.getRessource().getId(), this.idRessource));
-            if (verif != null) {
-                return verif;
-            }
-        }
+        Boolean result = verification(this.idRessource, rd.getRessource().getId());
+        if (result != null) return result;
 
-        if (this.nomRessource != null) {
-            Boolean verif = this.verification(this.assertion(rd.getRessource().getNom(), this.nomRessource));
-            if (verif != null) {
-                return verif;
-            }
-        }
+        result = verification(this.nomRessource, rd.getRessource().getNom());
+        if (result != null) return result;
 
-        if (this.idEditeur != null) {
-            Boolean verif = this.verification(this.assertion(rd.getEditeur().getId(), this.idEditeur));
-            if (verif != null) {
-                return verif;
-            }
-        }
+        result = verification(this.idEditeur, rd.getEditeur().getId());
+        if (result != null) return result;
 
-        if (this.nomEditeur != null) {
-            Boolean verif = this.verification(this.assertion(rd.getEditeur().getNom(), this.nomEditeur));
-            if (verif != null) {
-                return verif;
-            }
-        }
+        result = verification(this.nomEditeur, rd.getEditeur().getNom());
+        if (result != null) return result;
 
         if (this.distributeurCom != null || this.nomDistributeurCom != null) {
-            for (AttributRessource distributeurCom : rd.getDistributeursCom()) {
-                if (this.distributeurCom != null) {
-                    Boolean verif = this.verification(this.assertion(distributeurCom.getId(), this.distributeurCom));
-                    if (verif != null) {
-                        return verif;
-                    }
-                }
+            for (AttributRessource dc : rd.getDistributeursCom()) {
+                result = verification(this.distributeurCom, dc.getId());
+                if (result != null) return result;
 
-                if (this.nomDistributeurCom != null) {
-                    Boolean verif = this.verification(this.assertion(distributeurCom.getNom(), this.nomDistributeurCom));
-                    if (verif != null) {
-                        return verif;
-                    }
-                }
+                result = verification(this.nomDistributeurCom, dc.getNom());
+                if (result != null) return result;
             }
         }
 
-        if (this.distributeurTech != null) {
-            Boolean verif = this.verification(this.assertion(rd.getDistributeurTech().getId(), this.distributeurTech));
-            if (verif != null) {
-                return verif;
-            }
-        }
+        result = verification(this.distributeurTech, rd.getDistributeurTech().getId());
+        if (result != null) return result;
 
-        if (this.nomEditeur != null) {
-            Boolean verif = this.verification(this.assertion(rd.getEditeur().getNom(), this.nomEditeur));
-            if (verif != null) {
-                return verif;
-            }
-        }
+        result = verification(this.nomDistributeurTech, rd.getDistributeurTech().getNom());
+        if (result != null) return result;
 
         if (this.affichable != null) {
-            Boolean verif = this.verification(this.affichable != rd.isAffichable());
-            if (verif != null) {
-                return verif;
-            }
+            result = verification(this.affichable != rd.isAffichable());
+            if (result != null) return result;
         }
 
         if (this.diffusable != null) {
-            Boolean verif = this.verification(this.diffusable != rd.isDiffusable());
-            if (verif != null) {
-                return verif;
-            }
+            result = verification(this.diffusable != rd.isDiffusable());
+            if (result != null) return result;
         }
 
         switch (this.operator) {
-            case AND: return true;
-            case OR: return false;
-            default: return true;
+            case AND:
+                return true;
+            case OR:
+                return false;
+            default:
+                return true;
         }
     }
 

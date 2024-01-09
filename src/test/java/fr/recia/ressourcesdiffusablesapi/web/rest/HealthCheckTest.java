@@ -1,3 +1,17 @@
+/*
+ * Copyright (C) 2021 GIP-RECIA, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *                 http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package fr.recia.ressourcesdiffusablesapi.web.rest;
 
 import fr.recia.ressourcesdiffusablesapi.test.TestUtil;
@@ -19,11 +33,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @Slf4j
 @SpringBootTest
-public class HealthCheckTest {
-    // Attributs.
+class HealthCheckTest {
+
     private MockMvc mockHealthCheckMvc;
 
-    // Méthodes
     @PostConstruct
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -34,7 +47,7 @@ public class HealthCheckTest {
     }
 
     @Test
-    public void testHealthCheck() throws Exception {
+    void testHealthCheck() throws Exception {
         mockHealthCheckMvc.perform(head("/health-check")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .accept(TestUtil.APPLICATION_JSON_UTF8))

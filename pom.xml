@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.4</version>
+        <version>2.7.16</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>fr.recia</groupId>
     <artifactId>ressources-diffusables-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Ressources Diffusables API</name>
     <description>API des ressources diffusables</description>
+
     <properties>
         <java.version>11</java.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -50,6 +55,7 @@
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
+            <version>2.10.9.2</version>
         </dependency>
         <!-- == §§ == -->
 
@@ -57,7 +63,7 @@
         <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-soffit-renderer</artifactId>
-            <version>5.4.0</version>
+            <version>5.13.1</version>
         </dependency>
         <!-- == §§ == -->
 
@@ -70,15 +76,15 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
-            <version>4.0.3</version>
+            <version>5.3.2</version>
         </dependency>
         <!-- == §§ == -->
 
         <!-- == DatatypeConverter (Lire les JWT) == -->
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.1</version>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.1</version>
         </dependency>
         <!-- == §§ == -->
 
@@ -105,7 +111,84 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>4.3</version>
+                <configuration>
+                    <strictCheck>true</strictCheck>
+                    <header>etc/header.template</header>
+                    <includes>
+                        <include>**/*.java</include>
+                        <include>src/**/*.xml</include>
+                        <include>**/*.properties</include>
+                        <include>**/*.css</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/dist/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>notice-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <configuration>
+                    <noticeTemplate>etc/NOTICE.template</noticeTemplate>
+                    <licenseMapping>
+                        <param>/etc/license-mappings.xml</param>
+                    </licenseMapping>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+    <scm>
+        <connection>scm:git:ssh://git@github.com:GIP-RECIA/Ressources-Diffusables-API.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/GIP-RECIA/Ressources-Diffusables-API.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/GIP-RECIA/Ressources-Diffusables-API.git</url>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>esco-releases</id>
+            <url>https://nexus.recia.dev/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>esco-snapshots</id>
+            <url>https://nexus.recia.dev/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <spring.profiles.active>test</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>ci</id>
+            <properties>
+                <spring.profiles.active>test</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

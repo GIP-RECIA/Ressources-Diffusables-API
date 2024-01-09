@@ -1,3 +1,17 @@
+/*
+ * Copyright (C) 2021 GIP-RECIA, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *                 http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package fr.recia.ressourcesdiffusablesapi.service.cache;
 
 import com.hazelcast.config.CacheConfig;
@@ -11,11 +25,10 @@ import javax.cache.spi.CachingProvider;
 import java.util.List;
 
 public class ServiceCacheHistoriqueJCache implements ServiceCacheHistorique {
-    // Attributs
+
     private final Cache<RessourceDiffusableFilter, List<RessourceDiffusable>> cache;
     private int size;
 
-    // Constructeurs
     public ServiceCacheHistoriqueJCache() {
         CachingProvider cachingProvider = Caching.getCachingProvider();
         CacheManager cacheManager = cachingProvider.getCacheManager();
@@ -27,7 +40,6 @@ public class ServiceCacheHistoriqueJCache implements ServiceCacheHistorique {
         this.size = 0;
     }
 
-    // Méthodes
     @Override
     public List<RessourceDiffusable> get(RessourceDiffusableFilter filter) {
         return this.cache.get(filter);
@@ -38,7 +50,7 @@ public class ServiceCacheHistoriqueJCache implements ServiceCacheHistorique {
         this.cache.put(filter, ressourcesDiffusables);
 
         // Mise à jour de la taille.
-        this.cache.forEach((entry) -> this.size++);
+        this.cache.forEach(entry -> this.size++);
     }
 
     @Override
@@ -50,4 +62,5 @@ public class ServiceCacheHistoriqueJCache implements ServiceCacheHistorique {
     public void clear() {
         this.cache.clear();
     }
+
 }

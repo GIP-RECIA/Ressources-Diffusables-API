@@ -12,26 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.ressourcesdiffusablesapi.model.apiresponse;
+package fr.recia.ressourcesdiffusablesapi.config.beans;
 
-public class ApiError {
+import lombok.Data;
 
-    private final Throwable exception;
+@Data
+public class SoffitProperties {
 
-    public ApiError(Throwable exception) {
-        this.exception = exception;
-    }
+    private String jwtSignatureKey;
 
-    public String getExceptionName() {
-        return this.exception.getClass().getSimpleName();
-    }
-
-    public String getExceptionMessage() {
-        return this.exception.getMessage();
-    }
-
-    public String getExceptionLocalizedMessage() {
-        return this.exception.getLocalizedMessage();
+    @Override
+    public String toString() {
+        return "\"SoffitProperties\": {" +
+                "\n\t\"jwtSignatureKey\": \"" + jwtSignatureKey + "\"" +
+                "\n}";
     }
 
 }

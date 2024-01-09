@@ -12,26 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.ressourcesdiffusablesapi.model.apiresponse;
+package fr.recia.ressourcesdiffusablesapi.config;
 
-public class ApiError {
+public class Constants {
 
-    private final Throwable exception;
-
-    public ApiError(Throwable exception) {
-        this.exception = exception;
+    private Constants() {
+        throw new IllegalStateException("Constants class");
     }
 
-    public String getExceptionName() {
-        return this.exception.getClass().getSimpleName();
-    }
-
-    public String getExceptionMessage() {
-        return this.exception.getMessage();
-    }
-
-    public String getExceptionLocalizedMessage() {
-        return this.exception.getLocalizedMessage();
-    }
+    public static final String PROPERTIES_TO_JSON_DELIMITER = "\", \"";
+    public static final String PROPERTIES_TO_JSON_PREFIX = "[ \"";
+    public static final String PROPERTIES_TO_JSON_SUFFIX = "\" ]";
 
 }

@@ -1,6 +1,0 @@
-service-gar-http-get:
-  ressources-diffusables-uri: ''
-
-security-configuration:
-  soffit:
-    jwt.signatureKey: ''
