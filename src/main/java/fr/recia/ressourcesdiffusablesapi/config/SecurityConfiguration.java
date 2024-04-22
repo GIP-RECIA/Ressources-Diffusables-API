@@ -17,8 +17,6 @@ package fr.recia.ressourcesdiffusablesapi.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.soffit.security.SoffitApiAuthenticationManager;
 import org.apereo.portal.soffit.security.SoffitApiPreAuthenticatedProcessingFilter;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.boot.web.servlet.support.ErrorPageFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,8 +29,6 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-
-import javax.servlet.Filter;
 
 @Slf4j
 @Configuration
@@ -75,24 +71,6 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager() {
         return new SoffitApiAuthenticationManager();
-    }
-
-    @Bean
-    public ErrorPageFilter errorPageFilter() {
-        return new ErrorPageFilter();
-    }
-
-    @Bean
-    public FilterRegistrationBean<Filter> disableSpringBootErrorFilter() {
-        /*
-         * The ErrorPageFilter (Spring) makes extra calls to HttpServletResponse.flushBuffer(),
-         * and this behavior produces many warnings in the portal logs during portlet requests.
-         */
-        FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
-        filterRegistrationBean.setFilter(errorPageFilter());
-        filterRegistrationBean.setEnabled(false);
-
-        return filterRegistrationBean;
     }
 
 }
