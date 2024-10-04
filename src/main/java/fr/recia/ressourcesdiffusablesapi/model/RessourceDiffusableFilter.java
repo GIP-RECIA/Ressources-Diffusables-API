@@ -207,6 +207,7 @@ public class RessourceDiffusableFilter implements Serializable {
         return this.idRessource == null &&
                 this.nomRessource == null &&
                 this.idEditeur == null &&
+                this.nomEditeur == null &&
                 this.distributeurCom == null &&
                 this.distributeurTech == null &&
                 this.affichable == null &&
