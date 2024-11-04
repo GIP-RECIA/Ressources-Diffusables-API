@@ -32,6 +32,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -51,9 +55,17 @@ public class ServiceGarHttpGet implements ServiceGar {
     @Autowired
     private ServiceCacheHistorique serviceCacheHistorique;
 
-    private final List<RessourceDiffusable> ressourcesDiffusablesComplet = new ArrayList<>();
+    ServiceCacheHistorique getServiceCacheHistorique(){
+        return  serviceCacheHistorique;
+    }
+
+    private List<RessourceDiffusable> ressourcesDiffusablesComplet = new ArrayList<>();
 
     private File ressourcesDiffusablesFile = null;
+
+    File getRessourcesDiffusablesFile(){
+        return ressourcesDiffusablesFile;
+    }
 
     private LocalDateTime dateGeneration = null;
 
@@ -116,63 +128,93 @@ public class ServiceGarHttpGet implements ServiceGar {
         this.ressourcesDiffusablesComplet.add(ressourceDiffusable);
     }
 
-    private void verifValidite() {
+    void verifValidite() {
         if (this.dateTelechargement == null || SECONDS.between(this.dateTelechargement, LocalDateTime.now()) > garProperties.getCacheDuration())
-            this.telechargerFichier();
+//            this.ressourcesDiffusablesFile = new File(garProperties.getDownloadLocationPath());
+//            lireFichier();
+//            if(false)
+              this.ressourcesDiffusablesComplet = getRessourceDiffusablesFromRessourcesDiffusablesUri();
     }
 
-    private void telechargerFichier() {
+    protected List<RessourceDiffusable> getRessourceDiffusablesFromRessourcesDiffusablesUri(){
+        boolean downloaded = telechargerFichier();
+        File currentFile = new File(garProperties.getDownloadLocationPath());
+        if (downloaded){
+            return this.lireFichier();
+        } else if(currentFile.exists() ){
+            return this.lireFichier();
+        } else {
+            return new ArrayList<>(); // ou retourner une exception
+        }
+    }
+
+    private boolean telechargerFichier() {
+
+        String pathStringTemp = garProperties.getDownloadLocationPath()+".temp";
+        String pathStringTrueFile = garProperties.getDownloadLocationPath();
+        // Début du téléchargement.
+        if (log.isInfoEnabled())
+            log.info("Ressources diffusables source file download: Starting download procedure");
+
+        // Identification du fichier.
+        if (this.getRessourcesDiffusablesFile() == null)
+            this.ressourcesDiffusablesFile = new File(pathStringTrueFile);
+
+        // Création du répertoire parent s'il n'existe pas.
+        if (!this.getRessourcesDiffusablesFile().getParentFile().exists())
+            this.getRessourcesDiffusablesFile().getParentFile().mkdirs();
+
+        // Téléchargement du fichier.
         try {
-            // Début du téléchargement.
-            if (log.isInfoEnabled())
-                log.info("Ressources diffusables source file download: Starting download procedure");
-
-            // Identification du fichier.
-            if (this.ressourcesDiffusablesFile == null)
-                this.ressourcesDiffusablesFile = new File(garProperties.getDownloadLocationPath());
-
-            // Création du répertoire parent s'il n'existe pas.
-            if (!this.ressourcesDiffusablesFile.getParentFile().exists())
-                this.ressourcesDiffusablesFile.getParentFile().mkdirs();
-
-            // Téléchargement du fichier.
-            new FileOutputStream(garProperties.getDownloadLocationPath())
+            new FileOutputStream(garProperties.getDownloadLocationPath()+".temp")
                     .getChannel()
                     .transferFrom(
                             Channels.newChannel(new URL(garProperties.getRessourcesDiffusablesUri()).openStream()),
                             0,
                             Long.MAX_VALUE
                     );
-
-            // Mise à jour de la date.
-            this.dateTelechargement = LocalDateTime.now();
-
-            // Suppression de l'historique.
-            this.serviceCacheHistorique.clear();
-
-            // Fin de téléchargement
-            if (log.isInfoEnabled())
-                log.info("Ressources diffusables source file download: ressources diffusables source file successfully downloaded!");
-
-            // Lancement de la lecture du fichier.
-            this.lireFichier();
-
-        } catch (MalformedURLException malformedURLException) {
+        }  catch (MalformedURLException malformedURLException) {
             log.error("Ressources diffusables source file download: malformed URL exception", malformedURLException);
-        } catch (IOException ioException) {
-            log.error("Ressources diffusables source file download: IO exception", ioException);
+        } catch (IOException e) {
+            log.error("Couldn't download JSON from "+garProperties.getRessourcesDiffusablesUri());
+
+                return false;
+            }
+
+        // Mise à jour de la date.
+        this.dateTelechargement = LocalDateTime.now();
+
+        // Suppression de l'historique.
+        this.serviceCacheHistorique.clear();
+
+        // Fin de téléchargement
+        if (log.isInfoEnabled())
+            log.info("Ressources diffusables source file download: ressources diffusables source file successfully downloaded!");
+
+        try {
+            Files.move(Paths.get(pathStringTemp), Paths.get(pathStringTrueFile), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
+        return true;
+
+//        catch (IOException ioException) {
+//            log.error("Ressources diffusables source file download: IO exception", ioException);
+//        }
     }
 
-    private void lireFichier() {
+    List<RessourceDiffusable> lireFichier() {
         if (log.isDebugEnabled()) {
             log.debug("Reading of ressources diffusables source file: Starting reading procedure");
-            log.debug("Reading of ressources diffusables source file: file is at {}", this.ressourcesDiffusablesFile.getAbsolutePath());
+            log.debug("Reading of ressources diffusables source file: file is at {}", this.getRessourcesDiffusablesFile().getAbsolutePath());
         }
+
+        List<RessourceDiffusable> toReturn = new ArrayList<>();
 
         try {
             // Lecture du JSON.
-            JsonNode jsonNode = objectMapper.readTree(this.ressourcesDiffusablesFile);
+            JsonNode jsonNode = objectMapper.readTree(this.getRessourcesDiffusablesFile());
 
             // Ouverture du singleton.
             jsonNode = jsonNode.get(0);
@@ -191,7 +233,7 @@ public class ServiceGarHttpGet implements ServiceGar {
             if (this.dateGeneration != null && dateGeneration.isEqual(this.dateGeneration)) {
                 if (log.isDebugEnabled())
                     log.debug("Reading of ressources diffusables source file: The file that has been previously read and the file currently read are the same; stopping the reading procedure");
-                return;
+                return ressourcesDiffusablesComplet;
             } else this.dateGeneration = dateGeneration;
 
 
@@ -257,7 +299,7 @@ public class ServiceGarHttpGet implements ServiceGar {
                 //     editeur: {"130006042_0000000106379136", "");
                 //     distributeurTech: {"130006042_0000000106379136", "Agrosup Dijon"}
                 // Il y a ce genre d'ambiguïté dans le fichier téléchargé.
-                this.ajouterRessource(
+                toReturn.add(
                         new RessourceDiffusable(
                                 new AttributRessource(
                                         idRessource,
@@ -296,5 +338,6 @@ public class ServiceGarHttpGet implements ServiceGar {
         // Fin de lecture.
         if (log.isDebugEnabled())
             log.debug("Reading of ressources diffusables source file: Ressources diffusables source file successfully read!");
+        return toReturn;
     }
 }
