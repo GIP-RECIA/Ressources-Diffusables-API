@@ -155,51 +155,55 @@ public class RessourceDiffusableFilter implements Serializable {
     }
 
     public boolean filter(RessourceDiffusable rd) {
-        Boolean result = verification(this.idRessource, rd.getRessource().getId());
-        if (result != null) return result;
+        try {
+            Boolean result = verification(this.idRessource, rd.getRessource().getId());
+            if (result != null) return result;
 
-        result = verification(this.nomRessource, rd.getRessource().getNom());
-        if (result != null) return result;
+            result = verification(this.nomRessource, rd.getRessource().getNom());
+            if (result != null) return result;
 
-        result = verification(this.idEditeur, rd.getEditeur().getId());
-        if (result != null) return result;
+            result = verification(this.idEditeur, rd.getEditeur().getId());
+            if (result != null) return result;
 
-        result = verification(this.nomEditeur, rd.getEditeur().getNom());
-        if (result != null) return result;
+            result = verification(this.nomEditeur, rd.getEditeur().getNom());
+            if (result != null) return result;
 
-        if (this.distributeurCom != null || this.nomDistributeurCom != null) {
-            for (AttributRessource dc : rd.getDistributeursCom()) {
-                result = verification(this.distributeurCom, dc.getId());
-                if (result != null) return result;
+            if (this.distributeurCom != null || this.nomDistributeurCom != null) {
+                for (AttributRessource dc : rd.getDistributeursCom()) {
+                    result = verification(this.distributeurCom, dc.getId());
+                    if (result != null) return result;
 
-                result = verification(this.nomDistributeurCom, dc.getNom());
+                    result = verification(this.nomDistributeurCom, dc.getNom());
+                    if (result != null) return result;
+                }
+            }
+
+            result = verification(this.distributeurTech, rd.getDistributeurTech().getId());
+            if (result != null) return result;
+
+            result = verification(this.nomDistributeurTech, rd.getDistributeurTech().getNom());
+            if (result != null) return result;
+
+            if (this.affichable != null) {
+                result = verification(this.affichable != rd.isAffichable());
                 if (result != null) return result;
             }
-        }
 
-        result = verification(this.distributeurTech, rd.getDistributeurTech().getId());
-        if (result != null) return result;
+            if (this.diffusable != null) {
+                result = verification(this.diffusable != rd.isDiffusable());
+                if (result != null) return result;
+            }
 
-        result = verification(this.nomDistributeurTech, rd.getDistributeurTech().getNom());
-        if (result != null) return result;
-
-        if (this.affichable != null) {
-            result = verification(this.affichable != rd.isAffichable());
-            if (result != null) return result;
-        }
-
-        if (this.diffusable != null) {
-            result = verification(this.diffusable != rd.isDiffusable());
-            if (result != null) return result;
-        }
-
-        switch (this.operator) {
-            case AND:
-                return true;
-            case OR:
-                return false;
-            default:
-                return true;
+            switch (this.operator) {
+                case AND:
+                    return true;
+                case OR:
+                    return false;
+                default:
+                    return true;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

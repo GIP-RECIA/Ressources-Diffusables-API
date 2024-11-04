@@ -15,6 +15,7 @@
 package fr.recia.ressourcesdiffusablesapi.service.gar;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.recia.ressourcesdiffusablesapi.config.AppProperties;
@@ -22,6 +23,7 @@ import fr.recia.ressourcesdiffusablesapi.config.beans.GARProperties;
 import fr.recia.ressourcesdiffusablesapi.model.AttributRessource;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusableFilter;
+import fr.recia.ressourcesdiffusablesapi.model.jsonmirror.RessourcesDiffusablesWrappingJsonMirror;
 import fr.recia.ressourcesdiffusablesapi.service.cache.ServiceCacheHistorique;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,135 +212,21 @@ public class ServiceGarHttpGet implements ServiceGar {
             log.debug("Reading of ressources diffusables source file: file is at {}", this.getRessourcesDiffusablesFile().getAbsolutePath());
         }
 
-        List<RessourceDiffusable> toReturn = new ArrayList<>();
-
+        File jsonFIle = getRessourcesDiffusablesFile();
         try {
-            // Lecture du JSON.
-            JsonNode jsonNode = objectMapper.readTree(this.getRessourcesDiffusablesFile());
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, false);
+            RessourcesDiffusablesWrappingJsonMirror[] result = mapper.readValue(jsonFIle, RessourcesDiffusablesWrappingJsonMirror[].class);
 
-            // Ouverture du singleton.
-            jsonNode = jsonNode.get(0);
-
-            // Récupération de la date de génération.
-            LocalDateTime dateGeneration = LocalDateTime.parse(
-                    jsonNode.get("dateGeneration").asText().replace(" ", ""),
-                    DateTimeFormatter.ISO_DATE_TIME
-            );
-            if (log.isDebugEnabled()) log.debug(
-                    "Reading of ressources diffusables source file: Ressources diffusables source file generation date: {}",
-                    DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss").format(dateGeneration)
-            );
-
-            // Est-ce que cela est utile de le relire ?
-            if (this.dateGeneration != null && dateGeneration.isEqual(this.dateGeneration)) {
-                if (log.isDebugEnabled())
-                    log.debug("Reading of ressources diffusables source file: The file that has been previously read and the file currently read are the same; stopping the reading procedure");
-                return ressourcesDiffusablesComplet;
-            } else this.dateGeneration = dateGeneration;
-
-
-            // Ouverture de l'objet des ressources diffusables.
-            jsonNode = jsonNode.get("ressourceDiffusable");
-
-            // Création de la map qui sert au cas où des ID viennent sans les noms.
-            Map<String, String> attributsPseudoCache = new HashMap<>();
-
-            // Pour chaque ressource diffusable.
-            for (int i = 0; jsonNode.has(i); i++) {
-                // Récupération du node JSON.
-                JsonNode ressourceDiffusableJson = jsonNode.get(i);
-
-                // Vérification que ce n'est pas une "mère de famille".
-                // Selon le standard, une ressource "mère de famille" est une ressource virtuelle qui est connectée
-                // à d'autres ressources dites "membres de famille". Au final ce n'est pas une vraie ressource.
-                if (ressourceDiffusableJson.has("mereFamille")) continue;
-
-                // Nom et ID de la ressource.
-                String idRessource = ressourceDiffusableJson.get("idRessource").asText();
-                JsonNode nomRessourceJson = ressourceDiffusableJson.get("nomRessource");
-                if (nomRessourceJson != null) attributsPseudoCache.put(idRessource, nomRessourceJson.asText());
-
-                // Nom et ID de l'éditeur.
-                String idEditeur = ressourceDiffusableJson.get("idEditeur").asText();
-                JsonNode nomEditeurJson = ressourceDiffusableJson.get("nomEditeur");
-                if (nomEditeurJson != null) attributsPseudoCache.put(idEditeur, nomEditeurJson.asText());
-
-                // Récupération du node JSON des distributeurs com.
-                JsonNode distributeursComJson = ressourceDiffusableJson.get("distributeursCom");
-
-                // Création de la liste des distributeurs com.
-                List<String> listeIdDistributeurCom = new ArrayList<>();
-
-                // Itération sur tous les distributeurs com.
-                for (int j = 0; distributeursComJson.has(j); j++) {
-                    // Nom et ID du distributeur com.
-                    String idDistributeurCom = distributeursComJson.get(j).get("distributeurCom").asText();
-                    JsonNode nomDistributeurComJson = distributeursComJson.get(j).get("nomDistributeurCom");
-                    if (nomDistributeurComJson != null)
-                        attributsPseudoCache.put(idDistributeurCom, nomDistributeurComJson.asText());
-
-                    // On ajoute le distributeur com à la liste des distributeurs com à ajouter.
-                    listeIdDistributeurCom.add(idDistributeurCom);
-                }
-
-                // Nom et ID de l'éditeur.
-                String idDistributeurTech = ressourceDiffusableJson.get("distributeurTech").asText();
-                JsonNode nomDistributeurTech = ressourceDiffusableJson.get("nomDistributeurTech");
-                if (nomDistributeurTech != null)
-                    attributsPseudoCache.put(idDistributeurTech, nomDistributeurTech.asText());
-
-                // Est-ce que la ressource est affichable ?
-                boolean affichable = ressourceDiffusableJson.get("affichable").asBoolean();
-
-                // Est-ce que la ressource est diffusable ?
-                boolean diffusable = ressourceDiffusableJson.get("diffusable").asBoolean();
-
-                // On crée les objets AttributRessources à ce moment là seulement car si le nom d'une des ressources est
-                // indiquée dans la ressource suivante il faut d'abord lire cette suivante avant de générer la première.
-                // Exemple :
-                //     editeur: {"130006042_0000000106379136", "");
-                //     distributeurTech: {"130006042_0000000106379136", "Agrosup Dijon"}
-                // Il y a ce genre d'ambiguïté dans le fichier téléchargé.
-                toReturn.add(
-                        new RessourceDiffusable(
-                                new AttributRessource(
-                                        idRessource,
-                                        attributsPseudoCache.getOrDefault(idRessource, "")
-                                ),
-                                new AttributRessource(
-                                        idEditeur,
-                                        attributsPseudoCache.getOrDefault(idEditeur, "")
-                                ),
-                                listeIdDistributeurCom.stream().map(
-                                        idDistributeurCom -> new AttributRessource(
-                                                idDistributeurCom,
-                                                attributsPseudoCache.getOrDefault(idDistributeurCom, "")
-                                        )
-                                ).collect(Collectors.toList()),
-                                new AttributRessource(
-                                        idDistributeurTech,
-                                        attributsPseudoCache.getOrDefault(idDistributeurTech, "")
-                                ),
-                                affichable,
-                                diffusable,
-                                false, ""
-                        )
-                );
+            if(result.length < 1){
+                throw new ArrayIndexOutOfBoundsException();
             }
-        } catch (JsonProcessingException e) {
-            log.error("Reading of ressources diffusables source file: JSON processing exception");
-            e.printStackTrace();
-        } catch (IOException ioException) {
-            log.error("Reading of ressources diffusables source file: IO exception");
-            ioException.printStackTrace();
+            if (log.isDebugEnabled())
+                log.debug("Reading of ressources diffusables source file: Ressources diffusables source file successfully read!");
+            return result[0].getRessourcesDiffusables();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-
-        // Suppression de l'historique.
-        this.serviceCacheHistorique.clear();
-
-        // Fin de lecture.
-        if (log.isDebugEnabled())
-            log.debug("Reading of ressources diffusables source file: Ressources diffusables source file successfully read!");
-        return toReturn;
     }
 }
