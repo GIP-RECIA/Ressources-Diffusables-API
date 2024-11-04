@@ -72,7 +72,9 @@ public class ServiceGarStatique implements ServiceGar {
                             ),
                             new AttributRessource("distributeurTech." + i, ""),
                             true,
-                            true
+                            true,
+                            false,
+                            ""
                     )
             );
         }

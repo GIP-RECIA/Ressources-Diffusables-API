@@ -320,7 +320,8 @@ public class ServiceGarHttpGet implements ServiceGar {
                                         attributsPseudoCache.getOrDefault(idDistributeurTech, "")
                                 ),
                                 affichable,
-                                diffusable
+                                diffusable,
+                                false, ""
                         )
                 );
             }

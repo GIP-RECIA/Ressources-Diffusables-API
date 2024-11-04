@@ -26,6 +26,9 @@ public class RessourceDiffusable implements Serializable {
     private final AttributRessource distributeurTech;
     private final boolean affichable;
     private final boolean diffusable;
+    private final boolean mereFamille;
+    private final String membreFamille;
+
 
     public RessourceDiffusable(
             AttributRessource ressource,
@@ -33,7 +36,7 @@ public class RessourceDiffusable implements Serializable {
             Collection<AttributRessource> distributeursCom,
             AttributRessource distributeurTech,
             boolean affichable,
-            boolean diffusable
+            boolean diffusable, boolean mereFamille, String membreFamille
     ) {
         this.ressource = ressource;
         this.editeur = editeur;
@@ -41,6 +44,8 @@ public class RessourceDiffusable implements Serializable {
         this.distributeurTech = distributeurTech;
         this.affichable = affichable;
         this.diffusable = diffusable;
+        this.mereFamille = mereFamille;
+        this.membreFamille = membreFamille;
     }
 
     public AttributRessource getRessource() {
