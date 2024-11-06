@@ -10,6 +10,7 @@ spring:
 app:
   gar:
     ressources-diffusables-uri: ''
+    download-location-path: ''
 
   soffit:
     jwt-signature-key: ''

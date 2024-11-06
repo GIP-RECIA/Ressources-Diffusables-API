@@ -27,6 +27,7 @@ import fr.recia.ressourcesdiffusablesapi.model.jsonmirror.RessourcesDiffusablesW
 import fr.recia.ressourcesdiffusablesapi.service.cache.ServiceCacheHistorique;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -151,36 +152,56 @@ public class ServiceGarHttpGet implements ServiceGar {
     }
 
     private boolean telechargerFichier() {
+        String downloadFileLocationFull = garProperties.getDownloadLocationPath();
+        String tempDownloadFileLocationFull = downloadFileLocationFull+ ".temp";
+        File jsonFile = new File(downloadFileLocationFull);
+        File tempJsonFile = new File(tempDownloadFileLocationFull);
 
-        String pathStringTemp = garProperties.getDownloadLocationPath()+".temp";
-        String pathStringTrueFile = garProperties.getDownloadLocationPath();
+        boolean downloadFolderFileExist = jsonFile.getParentFile().exists();
+        if(!downloadFolderFileExist){
+            boolean createdDownloadFolderFile = jsonFile.getParentFile().mkdirs();
+            if(createdDownloadFolderFile)
+                log.info("Created folder "+jsonFile.getParentFile().getPath() + " ");
+            //add else in upcoming refactor
+        }
+
         // Début du téléchargement.
         if (log.isInfoEnabled())
             log.info("Ressources diffusables source file download: Starting download procedure");
 
         // Identification du fichier.
         if (this.getRessourcesDiffusablesFile() == null)
-            this.ressourcesDiffusablesFile = new File(pathStringTrueFile);
+            this.ressourcesDiffusablesFile = jsonFile;
 
-        // Création du répertoire parent s'il n'existe pas.
-        if (!this.getRessourcesDiffusablesFile().getParentFile().exists())
-            this.getRessourcesDiffusablesFile().getParentFile().mkdirs();
 
         // Téléchargement du fichier.
         try {
-            new FileOutputStream(garProperties.getDownloadLocationPath()+".temp")
+            String contextURL = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+
+            if(contextURL.contains("://")){
+                contextURL = contextURL.split("://")[1];
+            }
+            String domainURL = contextURL.split("/")[0];
+            String prefix = "https://";
+            String combinedDomainURL = prefix + domainURL;
+            URL baseURL = new URL(combinedDomainURL);
+            URL mergedURL = new URL(baseURL, garProperties.getRessourcesDiffusablesUri());
+            log.info("Downloading JSON file from : "+mergedURL);
+            log.info("Downloading JSON file to : "+tempJsonFile.getPath());
+            new FileOutputStream(tempJsonFile.getPath())
                     .getChannel()
                     .transferFrom(
-                            Channels.newChannel(new URL(garProperties.getRessourcesDiffusablesUri()).openStream()),
+                            Channels.newChannel(mergedURL.openStream()),
                             0,
                             Long.MAX_VALUE
                     );
         }  catch (MalformedURLException malformedURLException) {
-            log.error("Ressources diffusables source file download: malformed URL exception", malformedURLException);
-        } catch (IOException e) {
-            log.error("Couldn't download JSON from "+garProperties.getRessourcesDiffusablesUri());
+            log.error("Ressources diffusables source file download: malformed URL exception, ", malformedURLException);
+            return false;
 
-                return false;
+        } catch (IOException e) {
+            log.error("Couldn't download JSON file, "+ e.getMessage());
+            return false;
             }
 
         // Mise à jour de la date.
@@ -194,7 +215,7 @@ public class ServiceGarHttpGet implements ServiceGar {
             log.info("Ressources diffusables source file download: ressources diffusables source file successfully downloaded!");
 
         try {
-            Files.move(Paths.get(pathStringTemp), Paths.get(pathStringTrueFile), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(Paths.get(tempJsonFile.getPath()), Paths.get(jsonFile.getPath()), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

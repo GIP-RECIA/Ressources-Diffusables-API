@@ -34,7 +34,7 @@ app:
   gar:
     cache-duration: 86400 # 24h.
     ressources-diffusables-uri: '=== Ressources Diffusables URI ==='
-    download-location-path: 'src/main/resources/downloads/ressourcesDiffusables.json' # Le fichier sera toujours JSON.
+    download-location-path: ''
 
   soffit:
     jwt-signature-key: '=== Signature Key ==='
