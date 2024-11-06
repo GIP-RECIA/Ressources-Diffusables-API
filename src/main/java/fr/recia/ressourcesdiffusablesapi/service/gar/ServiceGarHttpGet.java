@@ -24,7 +24,6 @@ import fr.recia.ressourcesdiffusablesapi.model.AttributRessource;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusableFilter;
 import fr.recia.ressourcesdiffusablesapi.model.jsonmirror.RessourcesDiffusablesWrappingJsonMirror;
-import fr.recia.ressourcesdiffusablesapi.service.cache.ServiceCacheHistorique;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -54,13 +53,6 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 public class ServiceGarHttpGet implements ServiceGar {
 
     private final GARProperties garProperties;
-
-    @Autowired
-    private ServiceCacheHistorique serviceCacheHistorique;
-
-    ServiceCacheHistorique getServiceCacheHistorique(){
-        return  serviceCacheHistorique;
-    }
 
     private List<RessourceDiffusable> ressourcesDiffusablesComplet = new ArrayList<>();
 
@@ -102,20 +94,12 @@ public class ServiceGarHttpGet implements ServiceGar {
         if (filter.isEmpty()) { // Soit le filtre est vide...
             if (log.isDebugEnabled()) log.debug("Ressources diffusables request: No filter; no need to check history");
             return this.ressourcesDiffusablesComplet;
-        } else { // Soit il faut faire un filtrage. Il est peut-être historisé.
-            List<RessourceDiffusable> ressourcesDiffusablesHistorisees = this.serviceCacheHistorique.get(filter);
-            if (ressourcesDiffusablesHistorisees != null) {
-                if (log.isDebugEnabled())
-                    log.debug("Ressources diffusables request: Getting request result from history");
-                return ressourcesDiffusablesHistorisees;
-            } else {
-                List<RessourceDiffusable> ressourcesDiffusablesFiltrees = new ArrayList<>();
-                for (RessourceDiffusable ressourceDiffusable : this.ressourcesDiffusablesComplet) {
-                    if (filter.filter(ressourceDiffusable)) ressourcesDiffusablesFiltrees.add(ressourceDiffusable);
-                }
-                this.serviceCacheHistorique.put(filter, ressourcesDiffusablesFiltrees);
-                return ressourcesDiffusablesFiltrees;
+        } else {
+            List<RessourceDiffusable> ressourcesDiffusablesFiltrees = new ArrayList<>();
+            for (RessourceDiffusable ressourceDiffusable : this.ressourcesDiffusablesComplet) {
+                if (filter.filter(ressourceDiffusable)) ressourcesDiffusablesFiltrees.add(ressourceDiffusable);
             }
+            return ressourcesDiffusablesFiltrees;
         }
     }
 
@@ -133,9 +117,6 @@ public class ServiceGarHttpGet implements ServiceGar {
 
     void verifValidite() {
         if (this.dateTelechargement == null || SECONDS.between(this.dateTelechargement, LocalDateTime.now()) > garProperties.getCacheDuration())
-//            this.ressourcesDiffusablesFile = new File(garProperties.getDownloadLocationPath());
-//            lireFichier();
-//            if(false)
               this.ressourcesDiffusablesComplet = getRessourceDiffusablesFromRessourcesDiffusablesUri();
     }
 
@@ -206,9 +187,6 @@ public class ServiceGarHttpGet implements ServiceGar {
 
         // Mise à jour de la date.
         this.dateTelechargement = LocalDateTime.now();
-
-        // Suppression de l'historique.
-        this.serviceCacheHistorique.clear();
 
         // Fin de téléchargement
         if (log.isInfoEnabled())
