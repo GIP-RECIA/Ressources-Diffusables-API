@@ -14,17 +14,30 @@
  */
 package fr.recia.ressourcesdiffusablesapi.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+import static fr.recia.ressourcesdiffusablesapi.utils.Utils.emptyIfNull;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AttributRessource implements Serializable {
 
+    @JsonAlias({"distributeurCom"})
     private final String id;
+    @JsonAlias({"nomDistributeurCom"})
     private final String nom;
 
     public AttributRessource(String id, String nom) {
-        this.id = id;
-        this.nom = nom;
+        this.id = emptyIfNull(id);
+        this.nom = emptyIfNull(nom);
+    }
+
+    public AttributRessource(){
+        this.id = "";
+        this.nom = "";
     }
 
     public String getId() {
