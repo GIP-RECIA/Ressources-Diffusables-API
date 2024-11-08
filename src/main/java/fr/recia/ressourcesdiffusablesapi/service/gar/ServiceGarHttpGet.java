@@ -23,7 +23,6 @@ import fr.recia.ressourcesdiffusablesapi.config.beans.GARProperties;
 import fr.recia.ressourcesdiffusablesapi.model.AttributRessource;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusableFilter;
-import fr.recia.ressourcesdiffusablesapi.model.jsonmirror.RessourcesDiffusablesWrappingJsonMirror;
 import fr.recia.ressourcesdiffusablesapi.service.cache.ServiceCache;
 import fr.recia.ressourcesdiffusablesapi.service.cache.ServiceCacheJson;
 import lombok.extern.slf4j.Slf4j;
