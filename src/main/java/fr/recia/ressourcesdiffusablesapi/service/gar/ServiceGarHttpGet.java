@@ -24,6 +24,8 @@ import fr.recia.ressourcesdiffusablesapi.model.AttributRessource;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusableFilter;
 import fr.recia.ressourcesdiffusablesapi.model.jsonmirror.RessourcesDiffusablesWrappingJsonMirror;
+import fr.recia.ressourcesdiffusablesapi.service.cache.ServiceCache;
+import fr.recia.ressourcesdiffusablesapi.service.cache.ServiceCacheJson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -54,6 +56,9 @@ public class ServiceGarHttpGet implements ServiceGar {
 
     private final GARProperties garProperties;
 
+    @Autowired
+    private final ServiceCache serviceCache;
+
     private List<RessourceDiffusable> ressourcesDiffusablesComplet = new ArrayList<>();
 
     private File ressourcesDiffusablesFile = null;
@@ -68,8 +73,9 @@ public class ServiceGarHttpGet implements ServiceGar {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public ServiceGarHttpGet(AppProperties appProperties) {
+    public ServiceGarHttpGet(AppProperties appProperties, ServiceCache serviceCache) {
         this.garProperties = appProperties.getGar();
+        this.serviceCache = serviceCache;
     }
 
     @Override
@@ -121,111 +127,8 @@ public class ServiceGarHttpGet implements ServiceGar {
     }
 
     protected List<RessourceDiffusable> getRessourceDiffusablesFromRessourcesDiffusablesUri(){
-        boolean downloaded = telechargerFichier();
-        File currentFile = new File(garProperties.getDownloadLocationPath());
-        if (downloaded){
-            return this.lireFichier();
-        } else if(currentFile.exists() ){
-            return this.lireFichier();
-        } else {
-            return new ArrayList<>(); // ou retourner une exception
-        }
+        return serviceCache.getAllRessourcesDiffusables();
     }
 
-    private boolean telechargerFichier() {
-        String downloadFileLocationFull = garProperties.getDownloadLocationPath();
-        String tempDownloadFileLocationFull = downloadFileLocationFull+ ".temp";
-        File jsonFile = new File(downloadFileLocationFull);
-        File tempJsonFile = new File(tempDownloadFileLocationFull);
 
-        boolean downloadFolderFileExist = jsonFile.getParentFile().exists();
-        if(!downloadFolderFileExist){
-            boolean createdDownloadFolderFile = jsonFile.getParentFile().mkdirs();
-            if(createdDownloadFolderFile)
-                log.info("Created folder "+jsonFile.getParentFile().getPath() + " ");
-            //add else in upcoming refactor
-        }
-
-        // Début du téléchargement.
-        if (log.isInfoEnabled())
-            log.info("Ressources diffusables source file download: Starting download procedure");
-
-        // Identification du fichier.
-        if (this.getRessourcesDiffusablesFile() == null)
-            this.ressourcesDiffusablesFile = jsonFile;
-
-
-        // Téléchargement du fichier.
-        try {
-            String contextURL = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-
-            if(contextURL.contains("://")){
-                contextURL = contextURL.split("://")[1];
-            }
-            String domainURL = contextURL.split("/")[0];
-            String prefix = "https://";
-            String combinedDomainURL = prefix + domainURL;
-            URL baseURL = new URL(combinedDomainURL);
-            URL mergedURL = new URL(baseURL, garProperties.getRessourcesDiffusablesUri());
-            log.info("Downloading JSON file from : "+mergedURL);
-            log.info("Downloading JSON file to : "+tempJsonFile.getPath());
-            new FileOutputStream(tempJsonFile.getPath())
-                    .getChannel()
-                    .transferFrom(
-                            Channels.newChannel(mergedURL.openStream()),
-                            0,
-                            Long.MAX_VALUE
-                    );
-        }  catch (MalformedURLException malformedURLException) {
-            log.error("Ressources diffusables source file download: malformed URL exception, ", malformedURLException);
-            return false;
-
-        } catch (IOException e) {
-            log.error("Couldn't download JSON file, "+ e.getMessage());
-            return false;
-            }
-
-        // Mise à jour de la date.
-        this.dateTelechargement = LocalDateTime.now();
-
-        // Fin de téléchargement
-        if (log.isInfoEnabled())
-            log.info("Ressources diffusables source file download: ressources diffusables source file successfully downloaded!");
-
-        try {
-            Files.move(Paths.get(tempJsonFile.getPath()), Paths.get(jsonFile.getPath()), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return true;
-
-//        catch (IOException ioException) {
-//            log.error("Ressources diffusables source file download: IO exception", ioException);
-//        }
-    }
-
-    List<RessourceDiffusable> lireFichier() {
-        if (log.isDebugEnabled()) {
-            log.debug("Reading of ressources diffusables source file: Starting reading procedure");
-            log.debug("Reading of ressources diffusables source file: file is at {}", this.getRessourcesDiffusablesFile().getAbsolutePath());
-        }
-
-        File jsonFIle = getRessourcesDiffusablesFile();
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, false);
-            RessourcesDiffusablesWrappingJsonMirror[] result = mapper.readValue(jsonFIle, RessourcesDiffusablesWrappingJsonMirror[].class);
-
-            if(result.length < 1){
-                throw new ArrayIndexOutOfBoundsException();
-            }
-            if (log.isDebugEnabled())
-                log.debug("Reading of ressources diffusables source file: Ressources diffusables source file successfully read!");
-            return result[0].getRessourcesDiffusables();
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

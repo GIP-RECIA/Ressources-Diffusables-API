@@ -14,19 +14,34 @@
  */
 package fr.recia.ressourcesdiffusablesapi.model;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.*;
+import fr.recia.ressourcesdiffusablesapi.utils.Utils;
+import lombok.Getter;
 
+import java.io.Serializable;
+import java.util.*;
+
+import static fr.recia.ressourcesdiffusablesapi.utils.Utils.emptyIfNull;
+import static fr.recia.ressourcesdiffusablesapi.utils.Utils.falseIfNull;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RessourceDiffusable implements Serializable {
 
+    @Getter
     private final AttributRessource ressource;
+    @Getter
     private final AttributRessource editeur;
+    @Getter
     private final Collection<AttributRessource> distributeursCom;
+    @Getter
     private final AttributRessource distributeurTech;
+    @Getter
     private final boolean affichable;
+    @Getter
     private final boolean diffusable;
+    @Getter
     private final boolean mereFamille;
+    @Getter
     private final String membreFamille;
 
 
@@ -48,28 +63,34 @@ public class RessourceDiffusable implements Serializable {
         this.membreFamille = membreFamille;
     }
 
-    public AttributRessource getRessource() {
-        return this.ressource;
+    @JsonCreator
+    public RessourceDiffusable(@JsonProperty("idRessource") String idRessource,
+                               @JsonProperty("nomRessource") String nomRessource,
+                               @JsonProperty("idEditeur") String idEditeur,
+                               @JsonProperty("nomEditeur") String nomEditeur,
+                               @JsonProperty("distributeurTech") String idDistributeurTech,
+                               @JsonProperty("nomDistributeurTech") String nomDistributeurTech,
+                               @JsonProperty("membreFamille") String membreFamille,
+                               @JsonProperty("distributeursCom") Collection<AttributRessource> distributeursCom,
+                               @JsonProperty("affichable") Boolean affichable,
+                               @JsonProperty("diffusable") Boolean diffusable,
+                               @JsonProperty("mereFamille") Boolean mereFamille){
+        this.ressource = new AttributRessource(idRessource, nomRessource);
+        this.editeur = new AttributRessource(idEditeur, nomEditeur);
+        this.distributeursCom = distributeursCom;
+        this.distributeurTech = new AttributRessource(idDistributeurTech, nomDistributeurTech);
+        this.affichable = falseIfNull(affichable);
+        this.diffusable = falseIfNull(diffusable);
+        this.mereFamille = falseIfNull(mereFamille);
+        this.membreFamille = emptyIfNull(membreFamille);
     }
 
-    public AttributRessource getEditeur() {
-        return this.editeur;
-    }
+    @JsonIgnore @Getter
+    private final Map<String, String> properties = new HashMap<>();
 
-    public Collection<AttributRessource> getDistributeursCom() {
-        return this.distributeursCom;
-    }
-
-    public AttributRessource getDistributeurTech() {
-        return this.distributeurTech;
-    }
-
-    public boolean isAffichable() {
-        return this.affichable;
-    }
-
-    public boolean isDiffusable() {
-        return this.diffusable;
+    @JsonAnySetter
+    public void add(String key, String value) {
+        properties.put(key, value);
     }
 
     @Override
@@ -77,7 +98,6 @@ public class RessourceDiffusable implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RessourceDiffusable that = (RessourceDiffusable) o;
-
         return affichable == that.affichable && diffusable == that.diffusable && ressource.equals(that.ressource) && editeur.equals(that.editeur) && distributeursCom.equals(that.distributeursCom) && distributeurTech.equals(that.distributeurTech);
     }
 

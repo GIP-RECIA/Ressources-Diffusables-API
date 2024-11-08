@@ -29,7 +29,9 @@
 
     <!-- ServiceGar -->
     <bean id="serviceGar" class="fr.recia.ressourcesdiffusablesapi.service.gar.ServiceGarHttpGet"/>
+    <bean id="serviceCache" class="fr.recia.ressourcesdiffusablesapi.service.cache.ServiceCacheJson"/>
+    <bean id="serviceGarJsonParser" class="fr.recia.ressourcesdiffusablesapi.service.jsonparser.ServiceGarJsonParserAnnotationsBased"/>
 
     <!-- ServiceCacheHistorique -->
-    <bean id="serviceCacheHistorique" class="fr.recia.ressourcesdiffusablesapi.service.cache.ServiceCacheHistoriqueEhcache"/>
+<!--    <bean id="serviceCacheHistorique" class="fr.recia.ressourcesdiffusablesapi.service.cache.ServiceCacheHistoriqueEhcache"/>-->
 </beans>
