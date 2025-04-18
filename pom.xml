@@ -130,6 +130,14 @@
                     </licenseMapping>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <packagingExcludes>**/application-*.yml</packagingExcludes>
+                    <attachClasses>true</attachClasses>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
