@@ -19,14 +19,12 @@ import lombok.Data;
 @Data
 public class GARProperties {
 
-    private Long cacheDuration;
     private String ressourcesDiffusablesUri;
     private String downloadLocationPath;
 
     @Override
     public String toString() {
         return "\"GARProperties\": {" +
-                "\n\t\"cacheDuration\": " + cacheDuration +
                 "\n\t\"ressourcesDiffusablesUri\": \"" + ressourcesDiffusablesUri + "\"" +
                 "\n\t\"downloadLocationPath\": \"" + downloadLocationPath + "\"" +
                 "\n}";
