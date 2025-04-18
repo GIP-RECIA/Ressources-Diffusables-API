@@ -14,13 +14,14 @@
  */
 package fr.recia.ressourcesdiffusablesapi.web.rest;
 
+import fr.recia.ressourcesdiffusablesapi.model.PaginationRequest;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusableFilter;
-import fr.recia.ressourcesdiffusablesapi.model.apiresponse.ApiError;
 import fr.recia.ressourcesdiffusablesapi.model.apiresponse.ApiResponse;
-import fr.recia.ressourcesdiffusablesapi.service.gar.ServiceGar;
+import fr.recia.ressourcesdiffusablesapi.service.filter.IRessourceDiffusableFilterService;
+import fr.recia.ressourcesdiffusablesapi.web.rest.exceptions.RequestArgumentNumericValueInvalidException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,11 +39,14 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping(path = "api/")
 public class ApiRessourcesDiffusablesController {
 
-    @Autowired
-    private ServiceGar serviceGar;
+    private  final IRessourceDiffusableFilterService filterService;
+
+    public ApiRessourcesDiffusablesController(IRessourceDiffusableFilterService ressourceDiffusableFilterService) {
+        this.filterService = ressourceDiffusableFilterService;
+    }
 
     @GetMapping(value = "/ressources-diffusables")
-    public ApiResponse ressourcesDiffusables(
+    public ResponseEntity<ApiResponse> ressourcesDiffusables(
             @RequestParam(value = "page") final int page,
             @RequestParam(value = "operator", required = false) final String operator,
             @RequestParam(value = "idRessource", required = false) final String idRessource,
@@ -59,30 +63,29 @@ public class ApiRessourcesDiffusablesController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        if (log.isDebugEnabled()) log.debug("Ressources diffusables request.");
-        return new ApiResponse(
-                "Ressources diffusables request successful.",
-                this.serviceGar.getRessourcesDiffusables(
-                        page,
-                        elementsParPage,
-                        new RessourceDiffusableFilter(
-                                operator,
-                                idRessource,
-                                nomRessource,
-                                idEditeur,
-                                nomEditeur,
-                                distributeurCom,
-                                nomDistributeurCom,
-                                distributeurTech,
-                                nomDistributeurTech,
-                                affichable,
-                                diffusable
-                        )
-                )
-        );
-    }
 
+        if(page <= 0){
+            throw new RequestArgumentNumericValueInvalidException(String.format("page number is %d, should be greater than zero", page));
+        }
+        if(elementsParPage <= 0){
+            throw new RequestArgumentNumericValueInvalidException(String.format("elementsParPage (\"ressourcesPerPage\" in  request) is %d, should be greater than zero", page));
+        }
+
+        RessourceDiffusableFilter filter = new RessourceDiffusableFilter(
+                operator,
+                idRessource,
+                nomRessource,
+                idEditeur,
+                nomEditeur,
+                distributeurCom,
+                nomDistributeurCom,
+                distributeurTech,
+                nomDistributeurTech,
+                affichable,
+                diffusable
         );
+        return ResponseEntity.ok(new ApiResponse("Ressources diffusables request successful.", filterService.getRessourcesDiffusablesFiltered(filter,
+                new PaginationRequest(page,elementsParPage))));
     }
 
     @ExceptionHandler({
@@ -90,28 +93,22 @@ public class ApiRessourcesDiffusablesController {
             MethodArgumentTypeMismatchException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
-    public ApiResponse handleExceptionMissingParameter(
+    public ResponseEntity<String>  handleExceptionMissingParameter(
             HttpServletRequest request,
             HttpServletResponse response,
             Exception exception
     ) {
-        return new ApiResponse(
-                "Api request failed: bad request.",
-                new ApiError(exception)
-        );
+        return  ResponseEntity.badRequest().body("Api request failed: bad request.");
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
-    public ApiResponse handleExceptionElse(
+    public ResponseEntity<String>  handleExceptionElse(
             HttpServletRequest request,
             HttpServletResponse response,
             Exception exception
     ) {
-        return new ApiResponse(
-                "Api request failed: unknown internal server error.",
-                new ApiError(exception)
-        );
+         return ResponseEntity.internalServerError().body("Api request failed: unknown internal server error.");
     }
 
 }

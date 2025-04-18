@@ -14,20 +14,39 @@
  */
 package fr.recia.ressourcesdiffusablesapi.model.apiresponse;
 
+import fr.recia.ressourcesdiffusablesapi.model.PaginationResponse;
+import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
+import fr.recia.ressourcesdiffusablesapi.model.tuple.Tuple2Values;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class ApiResponse {
 
     private final long timestamp;
     private String message;
     private Object payload;
+    private PaginationResponse pagination;
 
     private ApiResponse() {
         this.timestamp = System.currentTimeMillis();
     }
 
+
     public ApiResponse(String message, Object payload) {
         this();
         this.message = message;
         this.payload = payload;
+    }
+
+    public ApiResponse(String message, Tuple2Values<List<RessourceDiffusable>, PaginationResponse> responseTuple2Values) {
+        this();
+        this.message = message;
+        Map<String, Object> payloadMap = new HashMap<>();
+        payloadMap.put("ressourcesDiffusables", responseTuple2Values.getObject1());
+        payloadMap.put("pagination", responseTuple2Values.getObject2());
+        this.payload = payloadMap;
     }
 
     public long getTimestamp() {
