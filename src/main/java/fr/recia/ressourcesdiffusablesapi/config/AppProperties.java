@@ -17,6 +17,7 @@ package fr.recia.ressourcesdiffusablesapi.config;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import fr.recia.ressourcesdiffusablesapi.config.beans.CorsProperties;
 import fr.recia.ressourcesdiffusablesapi.config.beans.GARProperties;
+import fr.recia.ressourcesdiffusablesapi.config.beans.NoGARProperties;
 import fr.recia.ressourcesdiffusablesapi.config.beans.SoffitProperties;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ import javax.annotation.PostConstruct;
 @Configuration
 @ConfigurationProperties(
         prefix = "app",
-        ignoreUnknownFields = false
+        ignoreUnknownFields = true
 )
 @Data
 @Validated
@@ -39,6 +40,8 @@ public class AppProperties {
     private CorsProperties cors = new CorsProperties();
     private GARProperties gar = new GARProperties();
     private SoffitProperties soffit = new SoffitProperties();
+    private NoGARProperties noGar = new NoGARProperties();
+    private long cacheLifetimeInSeconds = 0;
 
     @PostConstruct
     private void init() throws JsonProcessingException {
@@ -50,7 +53,9 @@ public class AppProperties {
         return "{\n" +
                 cors + ",\n" +
                 gar + ",\n" +
-                soffit +
+                noGar + ",\n" +
+                soffit + ",\n" +
+                String.format("Cache lifetime: %s seconds",cacheLifetimeInSeconds) +
                 "\n}";
     }
 
