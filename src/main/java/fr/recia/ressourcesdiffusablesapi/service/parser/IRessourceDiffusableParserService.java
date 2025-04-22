@@ -12,17 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.ressourcesdiffusablesapi.service.cache;
+package fr.recia.ressourcesdiffusablesapi.service.parser;
 
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
-import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusableFilter;
-import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
-@Service
-public interface ServiceCache {
-
-    public List<RessourceDiffusable> getAllRessourcesDiffusables();
-
+public interface IRessourceDiffusableParserService {
+    public List<RessourceDiffusable> parseJsonIntoRessourceDiffusableList(File file);
 }

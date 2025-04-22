@@ -12,15 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.ressourcesdiffusablesapi.service.jsonparser;
+package fr.recia.ressourcesdiffusablesapi.service.cache;
 
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
+import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-public interface ServiceGarJsonParser {
-    public List<RessourceDiffusable> parseJsonIntoRessourceDiffusableList(String jsonFilePath) throws IOException;
-    public List<RessourceDiffusable> parseJsonIntoRessourceDiffusableList(File jsonFile) throws IOException;
+@Service
+public interface ICacheService {
+
+    public List<RessourceDiffusable> getRessourceDiffusableList();
+
 }
