@@ -21,12 +21,14 @@ public class GARProperties {
 
     private String ressourcesDiffusablesUri;
     private String downloadLocationPath;
+    private String downloadFileName;
 
     @Override
     public String toString() {
         return "\"GARProperties\": {" +
                 "\n\t\"ressourcesDiffusablesUri\": \"" + ressourcesDiffusablesUri + "\"" +
                 "\n\t\"downloadLocationPath\": \"" + downloadLocationPath + "\"" +
+                "\n\t\"dowloadFileName\": \"" + downloadFileName + "\"" +
                 "\n}";
     }
 
