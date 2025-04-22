@@ -17,31 +17,21 @@ package fr.recia.ressourcesdiffusablesapi.model.apiresponse;
 import fr.recia.ressourcesdiffusablesapi.model.PaginationResponse;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
 import fr.recia.ressourcesdiffusablesapi.model.tuple.Tuple2Values;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 public class ApiResponse {
 
     private final long timestamp;
-    private String message;
-    private Object payload;
-    private PaginationResponse pagination;
-
-    private ApiResponse() {
-        this.timestamp = System.currentTimeMillis();
-    }
-
-
-    public ApiResponse(String message, Object payload) {
-        this();
-        this.message = message;
-        this.payload = payload;
-    }
+    private final String message;
+    private final Object payload;
 
     public ApiResponse(String message, Tuple2Values<List<RessourceDiffusable>, PaginationResponse> responseTuple2Values) {
-        this();
+        this.timestamp = System.currentTimeMillis();
         this.message = message;
         Map<String, Object> payloadMap = new HashMap<>();
         payloadMap.put("ressourcesDiffusables", responseTuple2Values.getObject1());
@@ -49,20 +39,9 @@ public class ApiResponse {
         this.payload = payloadMap;
     }
 
-    public long getTimestamp() {
-        return this.timestamp;
-    }
-
-    public String getMessage() {
-        return this.message;
-    }
-
+    // used by jackson serialization
     public String getPayloadClass() {
         return this.payload.getClass().getSimpleName();
-    }
-
-    public Object getPayload() {
-        return this.payload;
     }
 
 }
