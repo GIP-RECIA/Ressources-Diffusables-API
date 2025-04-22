@@ -90,7 +90,8 @@ public class ApiRessourcesDiffusablesController {
 
     @ExceptionHandler({
             MissingServletRequestParameterException.class,
-            MethodArgumentTypeMismatchException.class
+            MethodArgumentTypeMismatchException.class,
+            RequestArgumentNumericValueInvalidException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
     public ResponseEntity<String>  handleExceptionMissingParameter(
@@ -98,6 +99,7 @@ public class ApiRessourcesDiffusablesController {
             HttpServletResponse response,
             Exception exception
     ) {
+        log.error("exception: ", exception);
         return  ResponseEntity.badRequest().body("Api request failed: bad request.");
     }
 
@@ -108,7 +110,7 @@ public class ApiRessourcesDiffusablesController {
             HttpServletResponse response,
             Exception exception
     ) {
+        log.error("exception: ",exception);
          return ResponseEntity.internalServerError().body("Api request failed: unknown internal server error.");
     }
-
 }
