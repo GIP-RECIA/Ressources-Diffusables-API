@@ -15,7 +15,6 @@
 package fr.recia.ressourcesdiffusablesapi.model;
 
 import com.fasterxml.jackson.annotation.*;
-import fr.recia.ressourcesdiffusablesapi.utils.Utils;
 import lombok.Getter;
 
 import java.io.Serializable;
@@ -55,7 +54,7 @@ public class RessourceDiffusable implements Serializable {
     ) {
         this.ressource = ressource;
         this.editeur = editeur;
-        this.distributeursCom = distributeursCom;
+        this.distributeursCom = emptyIfNull(distributeursCom);
         this.distributeurTech = distributeurTech;
         this.affichable = affichable;
         this.diffusable = diffusable;
@@ -77,7 +76,7 @@ public class RessourceDiffusable implements Serializable {
                                @JsonProperty("mereFamille") Boolean mereFamille){
         this.ressource = new AttributRessource(idRessource, nomRessource);
         this.editeur = new AttributRessource(idEditeur, nomEditeur);
-        this.distributeursCom = distributeursCom;
+        this.distributeursCom = emptyIfNull(distributeursCom);
         this.distributeurTech = new AttributRessource(idDistributeurTech, nomDistributeurTech);
         this.affichable = falseIfNull(affichable);
         this.diffusable = falseIfNull(diffusable);
