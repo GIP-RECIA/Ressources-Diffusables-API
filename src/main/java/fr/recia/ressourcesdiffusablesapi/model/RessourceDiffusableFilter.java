@@ -32,8 +32,8 @@ public class RessourceDiffusableFilter implements Serializable {
     private final String nomDistributeurCom;
     private final String distributeurTech;
     private final String nomDistributeurTech;
-    private final Boolean affichable;
-    private final Boolean diffusable;
+    private final FilterBooleanWrapper affichable;
+    private final FilterBooleanWrapper diffusable;
 
     public RessourceDiffusableFilter(
             String operator,
@@ -57,8 +57,8 @@ public class RessourceDiffusableFilter implements Serializable {
         this.nomDistributeurCom = nomDistributeurCom == null ? null : unaccent(nomDistributeurCom.toLowerCase(Locale.ROOT));
         this.distributeurTech = distributeurTech == null ? null : unaccent(distributeurTech.toLowerCase(Locale.ROOT));
         this.nomDistributeurTech = nomDistributeurTech == null ? null : unaccent(nomDistributeurTech.toLowerCase(Locale.ROOT));
-        this.affichable = affichable;
-        this.diffusable = diffusable;
+        this.affichable = new FilterBooleanWrapper(affichable);
+        this.diffusable = new FilterBooleanWrapper(diffusable);
     }
 
     public Operator getOperator() {
@@ -97,11 +97,11 @@ public class RessourceDiffusableFilter implements Serializable {
         return this.nomDistributeurTech;
     }
 
-    public boolean isAffichable() {
+    public FilterBooleanWrapper isAffichable() {
         return this.affichable;
     }
 
-    public boolean isDiffusable() {
+    public FilterBooleanWrapper isDiffusable() {
         return this.diffusable;
     }
 
@@ -184,15 +184,11 @@ public class RessourceDiffusableFilter implements Serializable {
             result = verification(this.nomDistributeurTech, rd.getDistributeurTech().getNom());
             if (result != null) return result;
 
-            if (this.affichable != null) {
-                result = verification(this.affichable != rd.isAffichable());
-                if (result != null) return result;
-            }
+            result = verification(this.affichable.compare(rd.isAffichable()));
+            if (result != null) return result;
 
-            if (this.diffusable != null) {
-                result = verification(this.diffusable != rd.isDiffusable());
-                if (result != null) return result;
-            }
+            result = verification(this.diffusable.compare(rd.isDiffusable()));
+            if (result != null) return result;
 
             switch (this.operator) {
                 case AND:
