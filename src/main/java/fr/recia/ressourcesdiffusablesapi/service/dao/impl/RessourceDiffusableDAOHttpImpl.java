@@ -217,8 +217,7 @@ log.warn("will try download");
     @Override
     protected URI getFileLocalURI() {
         try {
-            Path downloadFilePath =  Paths.get(garProperties.getDownloadLocationPath(), garProperties.getDownloadFileName());
-            return new URI(downloadFilePath.toString());
+            return new URI(garProperties.getDownloadLocationPath()+"/"+garProperties.getDownloadFileName());
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

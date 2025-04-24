@@ -28,7 +28,7 @@ public  abstract class  RessourceDiffusableDAOAbstractImpl implements  IRessourc
     @Override
     public File getLocalFile() throws FileNotFoundException {
         log.warn("url is {}", getFileLocalURI());
-        File localFile =  new File(getFileLocalURI().toString());
+        File localFile =  new File(getFileLocalURI());
         if(!localFile.exists()){
             throw new FileNotFoundException("Local json file not found");
         }
