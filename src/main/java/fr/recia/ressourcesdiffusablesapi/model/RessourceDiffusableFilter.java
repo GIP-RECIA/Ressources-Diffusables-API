@@ -14,10 +14,14 @@
  */
 package fr.recia.ressourcesdiffusablesapi.model;
 
+import fr.recia.ressourcesdiffusablesapi.enums.FilterBoolean;
+import fr.recia.ressourcesdiffusablesapi.utils.Utils;
+
 import java.io.Serializable;
 import java.text.Normalizer;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.logging.Filter;
 
 public class RessourceDiffusableFilter implements Serializable {
 
@@ -135,60 +139,74 @@ public class RessourceDiffusableFilter implements Serializable {
                 .replaceAll("[^\\p{ASCII}]", "");
     }
 
-    @SuppressWarnings("java:S2447")
-    private Boolean verification(String attribut, String argument) {
-        if (attribut != null)
-            return verification(unaccent(argument).toLowerCase(Locale.ROOT).contains(attribut));
-        return null;
-    }
+    private FilterBooleanWrapper compareStringAttributes(String filterAttribute, String ressourceDiffusableValue){
 
-    @SuppressWarnings("java:S2447")
-    private Boolean verification(boolean assertion) {
+        boolean stringsMatch = ressourceDiffusableValue.toLowerCase(Locale.ROOT).contains(Utils.emptyIfNull(filterAttribute));
         switch (this.operator) {
             case AND:
-                return assertion ? null : false;
+                return stringsMatch ? new FilterBooleanWrapper(FilterBoolean.UNKNOWN) : new FilterBooleanWrapper(FilterBoolean.FALSE);
             case OR:
-                return assertion ? true : null;
+                return stringsMatch ? new FilterBooleanWrapper(FilterBoolean.TRUE) : new FilterBooleanWrapper(FilterBoolean.UNKNOWN);
             default:
-                return null;
+                return new FilterBooleanWrapper(FilterBoolean.UNKNOWN);
+        }
+    }
+
+    private FilterBooleanWrapper compareBooleanAttributes(FilterBooleanWrapper filterAttribute, boolean ressourceDiffusableValue){
+        FilterBoolean matchResult = filterAttribute.matchs(ressourceDiffusableValue);
+        switch (this.operator) {
+            case AND:
+                if(matchResult == FilterBoolean.FALSE){
+                    return new FilterBooleanWrapper(FilterBoolean.FALSE);
+                }else {
+                    return new FilterBooleanWrapper(FilterBoolean.UNKNOWN);
+                }
+            case OR:
+                if(matchResult == FilterBoolean.FALSE || matchResult == FilterBoolean.UNKNOWN){
+                    return new FilterBooleanWrapper(FilterBoolean.UNKNOWN);
+                }else {
+                    return new FilterBooleanWrapper(FilterBoolean.TRUE);
+                }
+            default:
+                return new FilterBooleanWrapper(FilterBoolean.UNKNOWN);
         }
     }
 
     public boolean filter(RessourceDiffusable rd) {
         try {
-            Boolean result = verification(this.idRessource, rd.getRessource().getId());
-            if (result != null) return result;
+            FilterBooleanWrapper result = compareStringAttributes(this.idRessource, rd.getRessource().getId());
+            if (result.getFilterBoolean() != FilterBoolean.UNKNOWN) return result.nonUnknownValueAsBoolean();
 
-            result = verification(this.nomRessource, rd.getRessource().getNom());
-            if (result != null) return result;
+            result = compareStringAttributes(this.nomRessource, rd.getRessource().getNom());
+            if (result.getFilterBoolean() != FilterBoolean.UNKNOWN) return result.nonUnknownValueAsBoolean();
 
-            result = verification(this.idEditeur, rd.getEditeur().getId());
-            if (result != null) return result;
+            result = compareStringAttributes(this.idEditeur, rd.getEditeur().getId());
+            if (result.getFilterBoolean() != FilterBoolean.UNKNOWN) return result.nonUnknownValueAsBoolean();
 
-            result = verification(this.nomEditeur, rd.getEditeur().getNom());
-            if (result != null) return result;
+            result = compareStringAttributes(this.nomEditeur, rd.getEditeur().getNom());
+            if (result.getFilterBoolean() != FilterBoolean.UNKNOWN) return result.nonUnknownValueAsBoolean();
 
             if (this.distributeurCom != null || this.nomDistributeurCom != null) {
                 for (AttributRessource dc : rd.getDistributeursCom()) {
-                    result = verification(this.distributeurCom, dc.getId());
-                    if (result != null) return result;
+                    result = compareStringAttributes(this.distributeurCom, dc.getId());
+                    if (result.getFilterBoolean() != FilterBoolean.UNKNOWN) return result.nonUnknownValueAsBoolean();
 
-                    result = verification(this.nomDistributeurCom, dc.getNom());
-                    if (result != null) return result;
+                    result = compareStringAttributes(this.nomDistributeurCom, dc.getNom());
+                    if (result.getFilterBoolean() != FilterBoolean.UNKNOWN) return result.nonUnknownValueAsBoolean();
                 }
             }
 
-            result = verification(this.distributeurTech, rd.getDistributeurTech().getId());
-            if (result != null) return result;
+            result = compareStringAttributes(this.distributeurTech, rd.getDistributeurTech().getId());
+            if (result.getFilterBoolean() != FilterBoolean.UNKNOWN) return result.nonUnknownValueAsBoolean();
 
-            result = verification(this.nomDistributeurTech, rd.getDistributeurTech().getNom());
-            if (result != null) return result;
+            result = compareStringAttributes(this.nomDistributeurTech, rd.getDistributeurTech().getNom());
+            if (result.getFilterBoolean() != FilterBoolean.UNKNOWN) return result.nonUnknownValueAsBoolean();
 
-            result = verification(this.affichable.compare(rd.isAffichable()));
-            if (result != null) return result;
+            result = compareBooleanAttributes(this.affichable,rd.isAffichable());
+            if (result.getFilterBoolean() != FilterBoolean.UNKNOWN) return result.nonUnknownValueAsBoolean();
 
-            result = verification(this.diffusable.compare(rd.isDiffusable()));
-            if (result != null) return result;
+            result = compareBooleanAttributes(this.diffusable,rd.isDiffusable());
+            if (result.getFilterBoolean() != FilterBoolean.UNKNOWN) return result.nonUnknownValueAsBoolean();
 
             switch (this.operator) {
                 case AND:

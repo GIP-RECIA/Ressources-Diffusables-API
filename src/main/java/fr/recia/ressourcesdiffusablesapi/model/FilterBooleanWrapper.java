@@ -34,8 +34,33 @@ public class FilterBooleanWrapper {
         }
     }
 
-    public boolean compare(boolean value){
-        return this.getFilterBoolean() == FilterBoolean.IGNORED || (this.getFilterBoolean() == FilterBoolean.TRUE && value) || (this.getFilterBoolean() == FilterBoolean.FALSE && !value);
+    public FilterBooleanWrapper(FilterBoolean filterBoolean){
+      this.filterBoolean = filterBoolean;
+    }
+
+    public FilterBoolean matchs(boolean value){
+        if(this.filterBoolean == FilterBoolean.UNKNOWN){
+            return FilterBoolean.UNKNOWN;
+        }else if(this.filterBoolean == FilterBoolean.TRUE && value){
+            return FilterBoolean.TRUE;
+        }else if(this.filterBoolean == FilterBoolean.FALSE && !value) {
+            return FilterBoolean.TRUE;
+        }else {
+            return FilterBoolean.FALSE;
+        }
+    }
+
+    public boolean nonUnknownValueAsBoolean(){
+        switch (this.filterBoolean){
+            case TRUE:
+                return true;
+            case FALSE:
+                return false;
+            case UNKNOWN:
+                throw new RuntimeException("Cannot convert UNKNOWN to boolean value");
+            default:
+                throw new RuntimeException(String.format("Cannot convert %S to boolean value",this.filterBoolean));
+        }
     }
 
     @Override
