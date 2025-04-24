@@ -17,5 +17,5 @@ package fr.recia.ressourcesdiffusablesapi.enums;
 public enum FilterBoolean {
     TRUE,
     FALSE,
-    IGNORED
+    UNKNOWN
 }
