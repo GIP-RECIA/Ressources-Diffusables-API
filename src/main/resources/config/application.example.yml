@@ -1,34 +1,14 @@
+server:
+  servlet:
+    context-path: /
+
 spring:
   config:
     activate:
-      on-profile: 'default-config'
-
----
-
-server:
-  port: 8090
-  servlet:
-    context-path: /spring-api
-  error:
-    whitelabel.enabled: true
-    include-binding-errors: always
-    include-exception: true
-    include-message: always
-    include-stacktrace: always
+      on-profile: "prod"
 
 logging:
-  config: "classpath:logback.xml"
-
-spring:
-  profiles:
-    active: @spring.profiles.active@
-    group:
-      dev: dev
-      test: test
-      prod: prod
-      ci: test
-
-  cache.jcache.config: classpath:ehcache.xml
+  config: "classpath:logback-dev.xml"
 
 app:
   cors:
@@ -50,9 +30,8 @@ app:
       - GET
     allowed-origins:
       -
-
   cache-lifetime-in-seconds: 86400
-  use-gar: true
+  use-gar: false
   gar:
     ressources-diffusables-uri: 'ressources/diffusables/uri'
     download-location-path: 'file:/path/to/containing/folder'
@@ -60,4 +39,4 @@ app:
   no-gar:
     local-json-file-path: '/local/ressourcesDiffusables.json'
   soffit:
-    jwt-signature-key: ''
+    jwt-signature-key: 'signatureKey'
