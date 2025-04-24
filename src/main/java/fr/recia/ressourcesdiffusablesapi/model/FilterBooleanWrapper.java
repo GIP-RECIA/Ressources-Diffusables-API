@@ -26,7 +26,7 @@ public class FilterBooleanWrapper {
 
     public FilterBooleanWrapper(Boolean bool){
         if(Objects.isNull(bool)){
-            filterBoolean = FilterBoolean.IGNORED;
+            filterBoolean = FilterBoolean.UNKNOWN;
         }else if(bool){
             filterBoolean = FilterBoolean.TRUE;
         }else {
@@ -43,11 +43,11 @@ public class FilterBooleanWrapper {
         if(!(other instanceof FilterBooleanWrapper)){
             return false;
         }
-        if(this.getFilterBoolean() == FilterBoolean.IGNORED){
+        if(this.getFilterBoolean() == FilterBoolean.UNKNOWN){
             return true;
         }
         FilterBooleanWrapper castedOther = (FilterBooleanWrapper) other;
-        if(castedOther.getFilterBoolean() == FilterBoolean.IGNORED){
+        if(castedOther.getFilterBoolean() == FilterBoolean.UNKNOWN){
             return true;
         }
         return ((FilterBooleanWrapper) other).getFilterBoolean().equals(this.getFilterBoolean());
