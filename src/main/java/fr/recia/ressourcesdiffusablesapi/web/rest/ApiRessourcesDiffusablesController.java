@@ -17,6 +17,7 @@ package fr.recia.ressourcesdiffusablesapi.web.rest;
 import fr.recia.ressourcesdiffusablesapi.model.PaginationRequest;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusableFilter;
 import fr.recia.ressourcesdiffusablesapi.model.apiresponse.ApiResponse;
+import fr.recia.ressourcesdiffusablesapi.model.apiresponse.ApiResponseError;
 import fr.recia.ressourcesdiffusablesapi.service.filter.IRessourceDiffusableFilterService;
 import fr.recia.ressourcesdiffusablesapi.web.rest.exceptions.RequestArgumentNumericValueInvalidException;
 import lombok.extern.slf4j.Slf4j;
@@ -105,12 +106,12 @@ public class ApiRessourcesDiffusablesController {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
-    public ResponseEntity<String>  handleExceptionElse(
+    public ResponseEntity<ApiResponseError>  handleExceptionElse(
             HttpServletRequest request,
             HttpServletResponse response,
             Exception exception
     ) {
         log.error("exception: ",exception);
-         return ResponseEntity.internalServerError().body("Api request failed: unknown internal server error.");
+         return ResponseEntity.internalServerError().body(new ApiResponseError("Api request failed: unknown internal server error."));
     }
 }
