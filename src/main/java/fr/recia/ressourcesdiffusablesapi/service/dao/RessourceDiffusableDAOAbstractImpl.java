@@ -23,16 +23,4 @@ import java.net.URI;
 @Slf4j
 public  abstract class  RessourceDiffusableDAOAbstractImpl implements  IRessourceDiffusableDAO{
 
-    abstract protected URI getFileLocalURI() ;
-
-    @Override
-    public File getLocalFile() throws FileNotFoundException {
-        log.warn("url is {}", getFileLocalURI());
-        File localFile =  new File(getFileLocalURI());
-        if(!localFile.exists()){
-            throw new FileNotFoundException("Local json file not found");
-        }
-        return localFile;
-    }
-
 }

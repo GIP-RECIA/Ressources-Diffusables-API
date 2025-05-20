@@ -17,6 +17,7 @@ package fr.recia.ressourcesdiffusablesapi.service.dao.impl;
 import fr.recia.ressourcesdiffusablesapi.config.AppProperties;
 import fr.recia.ressourcesdiffusablesapi.config.beans.GARProperties;
 import fr.recia.ressourcesdiffusablesapi.service.dao.RessourceDiffusableDAOAbstractImpl;
+import fr.recia.ressourcesdiffusablesapi.service.dao.exceptions.RessourceDiffusableDAOException;
 import fr.recia.ressourcesdiffusablesapi.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,27 +27,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Resource
@@ -66,86 +51,60 @@ public class RessourceDiffusableDAOHttpImpl extends RessourceDiffusableDAOAbstra
     //        Path downloadFilePath =  Paths.get(downloadFileDirectoryPathString, garProperties.getDowloadFileName());
     //           return new URI(downloadFilePath.toString());
     @Override
-    public void refreshRessourceDiffusableFile() throws IOException {
-log.warn("will try download");
-
-
-
-        String downloadFileDirectoryPathString = garProperties.getDownloadLocationPath();
-        File downloadFileDirectory = new File(downloadFileDirectoryPathString);
-
-
-
-        if(!downloadFileDirectory.exists()){
-            log.warn("ici");
-            try {
-                Files.createDirectories(downloadFileDirectory.toPath());
-            } catch (IOException e) {
-                log.error("error ",e);
-                throw new RuntimeException(e);
-            }
-        }else {
-            log.warn("la");
-
-            if(!downloadFileDirectory.isDirectory()){
-                log.warn("aie");
-                throw new IOException(String.format("Invalid download directory path: %s is not a directory", downloadFileDirectoryPathString));
-            }
-        }
-        log.warn("here");
-
-        Path downloadFilePath =  Paths.get(downloadFileDirectoryPathString, garProperties.getDownloadFileName());
-        log.debug("combined download file path is: {}", downloadFilePath);
-
-
-
-
-        URI uri = null;
-        try {
-            uri = new URI(downloadFilePath.toString());
-        } catch (URISyntaxException e) {
-            log.warn("throwing");
-            throw new RuntimeException(e);
-        }
-
-
-
+    public String getRessourceDiffusableRawJsonString() throws RessourceDiffusableDAOException {
+//       log.warn("will try download");
+//        String downloadFileDirectoryPathString = garProperties.getDownloadLocationPath();
+//        File downloadFileDirectory = new File(downloadFileDirectoryPathString);
+//        if(!downloadFileDirectory.exists()){
+//            log.warn("ici");
+//            try {
+//                Files.createDirectories(downloadFileDirectory.toPath());
+//            } catch (IOException e) {
+//                log.error("error ",e);
+//                throw new RuntimeException(e);
+//            }
+//        }else {
+//            log.warn("la");
+//
+//            if(!downloadFileDirectory.isDirectory()){
+//                log.warn("aie");
+//                throw new IOException(String.format("Invalid download directory path: %s is not a directory", downloadFileDirectoryPathString));
+//            }
+//        }
+//        log.warn("here");
+//
+//        Path downloadFilePath =  Paths.get(downloadFileDirectoryPathString, garProperties.getDownloadFileName());
+//        log.debug("combined download file path is: {}", downloadFilePath);
+//
+//        URI uri = null;
+//        try {
+//            uri = new URI(downloadFilePath.toString());
+//        } catch (URISyntaxException e) {
+//            log.warn("throwing");
+//            throw new RuntimeException(e);
+//        }
         String responseBody ="";
         try {
-            log.warn("uri is {}", garProperties.getRessourcesDiffusablesUri());
+            log.info("GAR RessourcesDiffusables URI is {}", garProperties.getRessourcesDiffusablesUri());
             HttpHeaders requestHeaders = new HttpHeaders();
             requestHeaders.setContentType(Utils.APPLICATION_JSON_UTF8);
             HttpEntity<Map<String, List<String>>> requestEntity = new HttpEntity<Map<String, List<String>>>(requestHeaders);
 
             ResponseEntity<String> response = restTemplate.exchange(garProperties.getRessourcesDiffusablesUri(), HttpMethod.GET, requestEntity, String.class);
             responseBody = Objects.requireNonNull(response.getBody());
-            log.warn("test successful");
-        } catch (RestClientException e) {
-            log.error("test ",  e);
-            throw new RuntimeException(e);
-        } catch (RuntimeException e) {
-            log.error("test runtime ex: ", e);
-
-            throw new RuntimeException(e);
+        } catch (RestClientException | NullPointerException  e) {
+            throw new RessourceDiffusableDAOException(e);
         }
 
 
-        FileOutputStream outputStream = new FileOutputStream(uri.getPath());
-        byte[] strToBytes = responseBody.getBytes();
-        outputStream.write(strToBytes);
+        return responseBody;
 
-        outputStream.close();
+//        log.warn(String.valueOf(responseBody.length()));
+//
+//        FileOutputStream outputStream = new FileOutputStream(uri.getPath());
+//        byte[] strToBytes = responseBody.getBytes();
+//        outputStream.write(strToBytes);
+//
+//        outputStream.close();
     }
-
-
-    @Override
-    protected URI getFileLocalURI() {
-        try {
-            return new URI(garProperties.getDownloadLocationPath()+"/"+garProperties.getDownloadFileName());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
 }

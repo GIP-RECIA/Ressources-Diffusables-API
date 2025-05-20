@@ -16,53 +16,37 @@ package fr.recia.ressourcesdiffusablesapi.service.dao.impl;
 
 import fr.recia.ressourcesdiffusablesapi.config.AppProperties;
 import fr.recia.ressourcesdiffusablesapi.service.dao.RessourceDiffusableDAOAbstractImpl;
-import fr.recia.ressourcesdiffusablesapi.service.dao.exceptions.NoGarJsonFileNotFound;
+import fr.recia.ressourcesdiffusablesapi.service.dao.exceptions.RessourceDiffusableDAOException;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Resource;
-import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 
 @Slf4j
 @Resource
 public class RessourceDiffusableDAOLocalJsonImpl extends RessourceDiffusableDAOAbstractImpl {
 
-
     private final AppProperties appProperties;
 
     public RessourceDiffusableDAOLocalJsonImpl(AppProperties appProperties){
         this.appProperties = appProperties;
         log.info("Created local json DAO");
-
     }
 
     @Override
-    public void refreshRessourceDiffusableFile() {
-        File file = new File(getFileLocalURI());
-        if(!file.exists()){
-            log.error("throwing");
-            throw new NoGarJsonFileNotFound(String.format("Could not found local json file at location %s", getFileLocalURI()));
-        }
-        log.debug("FOUND JSON FILE NO-GAR");
-    }
-
-    @Override
-    protected URI getFileLocalURI() {
+    public String getRessourceDiffusableRawJsonString() throws RessourceDiffusableDAOException {
         try {
-            log.warn("{}",appProperties.getNoGar());
-            log.warn("{}",appProperties.getNoGar().getLocalJsonFilePath());
-            log.warn("{}",RessourceDiffusableDAOLocalJsonImpl.class.getResource(appProperties.getNoGar().getLocalJsonFilePath()));
-
-            URI localFileURI = Objects.requireNonNull(RessourceDiffusableDAOLocalJsonImpl.class.getResource(appProperties.getNoGar().getLocalJsonFilePath())).toURI();
-            log.debug("file local URI is: {}", localFileURI);
-            return localFileURI;
-        } catch (URISyntaxException | NullPointerException e) {
-            log.error("exception :", e);
-            throw new NoGarJsonFileNotFound(String.format("Could not found local json file at location %s", appProperties.getNoGar().getLocalJsonFilePath()));
+          URI uri = Objects.requireNonNull(RessourceDiffusableDAOLocalJsonImpl.class.getResource(appProperties.getNoGar().getLocalJsonFilePath())).toURI();
+            String rawValue = Files.readString(Path.of(uri));
+            log.debug(rawValue.substring(0,40));
+            return  rawValue;
+        } catch (URISyntaxException | IOException e) {
+            throw new RessourceDiffusableDAOException(e);
         }
     }
-
-
 }

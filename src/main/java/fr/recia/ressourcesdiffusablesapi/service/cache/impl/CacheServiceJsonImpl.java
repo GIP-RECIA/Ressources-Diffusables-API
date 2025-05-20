@@ -17,18 +17,24 @@ package fr.recia.ressourcesdiffusablesapi.service.cache.impl;
 import fr.recia.ressourcesdiffusablesapi.config.AppProperties;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
 import fr.recia.ressourcesdiffusablesapi.service.cache.ICacheService;
+import fr.recia.ressourcesdiffusablesapi.service.cache.exceptions.CacheUpdateFailureException;
+import fr.recia.ressourcesdiffusablesapi.service.cache.io.ICacheFileIO;
+import fr.recia.ressourcesdiffusablesapi.service.cache.io.impl.CacheFileIO;
 import fr.recia.ressourcesdiffusablesapi.service.dao.IRessourceDiffusableDAO;
+import fr.recia.ressourcesdiffusablesapi.service.dao.exceptions.RessourceDiffusableDAOException;
+import fr.recia.ressourcesdiffusablesapi.service.dao.impl.RessourceDiffusableDAOLocalJsonImpl;
 import fr.recia.ressourcesdiffusablesapi.service.parser.IRessourceDiffusableParserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.util.Strings;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,14 +49,18 @@ public class CacheServiceJsonImpl implements ICacheService {
 
     private final IRessourceDiffusableParserService ressourceDiffusableParserService;
 
+    private final ICacheFileIO cacheFileIO;
+
     private LocalDateTime downloadLDT = LocalDateTime.MIN;
 
     private LocalDateTime expiryLDT = LocalDateTime.MIN;
 
     private List<RessourceDiffusable> ressourceDiffusableList;
 
-    public CacheServiceJsonImpl(AppProperties appProperties, IRessourceDiffusableDAO ressourceDiffusableDAO, IRessourceDiffusableParserService ressourceDiffusableParserService, Clock clock) {
+
+    public CacheServiceJsonImpl(AppProperties appProperties, IRessourceDiffusableDAO ressourceDiffusableDAO, IRessourceDiffusableParserService ressourceDiffusableParserService, Clock clock, ICacheFileIO cacheFileIO) {
         this.clock = clock;
+        this.cacheFileIO = cacheFileIO;
         this.appProperties = appProperties;
         this.ressourceDiffusableDAO = ressourceDiffusableDAO;
         this.ressourceDiffusableParserService = ressourceDiffusableParserService;
@@ -61,44 +71,63 @@ public class CacheServiceJsonImpl implements ICacheService {
 
         LocalDateTime localDateTime = LocalDateTime.now(clock);
         if(LocalDateTime.now(clock).isAfter(expiryLDT)){
-            updateRessourceDiffusableList();
+            log.info("Cache expired");
+            try {
+                updateRessourceDiffusableList();
+                this.expiryLDT = localDateTime.plusSeconds(appProperties.getCache().getCacheLifetimeInSeconds());
+                log.info("Cache refresh successful, will expire the {}", this.expiryLDT);
+            } catch (CacheUpdateFailureException e) {
+               if(Objects.nonNull(this.ressourceDiffusableList)){
+                   this.expiryLDT = LocalDateTime.now(this.clock).plusMinutes(30);
+                   log.warn("Due to cache update fail, set current cache expiry to {}, will use previously known ressources diffusables before next refresh", this.expiryLDT);
+                   return this.ressourceDiffusableList;
+               }else {
+                   throw new RuntimeException("No ressources diffusables available");
+               }
+            }
         }
 
         return ressourceDiffusableList;
     }
 
-    private void updateRessourceDiffusableList() {
-        // call to DAO
-        try{
-            this.ressourceDiffusableDAO.refreshRessourceDiffusableFile();
-            this.downloadLDT = LocalDateTime.now(clock);
-            this.expiryLDT = downloadLDT.plusSeconds(appProperties.getCacheLifetimeInSeconds());
-            this.ressourceDiffusableList = this.ressourceDiffusableParserService.parseJsonIntoRessourceDiffusableList(this.ressourceDiffusableDAO.getLocalFile());
-            return;
-        } catch (IOException ioException) {
-            // if whe still have a JSON from previous time ( GAR ) we read it
-            // doesn't need to check if GAR or no-GAR, no-GAR throw exception instead of returning false
-            File localFileFromDAO = null;
-            try {
-                localFileFromDAO = this.ressourceDiffusableDAO.getLocalFile();
-                this.ressourceDiffusableList = this.ressourceDiffusableParserService.parseJsonIntoRessourceDiffusableList(this.ressourceDiffusableDAO.getLocalFile());
-            } catch (FileNotFoundException fileNotFoundException) {
-                log.warn(fileNotFoundException.getMessage());
-                // if we have neither a json nor values in bean we throw an exception
-
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Unable to retrieve any RessourceDiffusable, neither from Mediacentre-WS nor local JSON file");
-                stringBuilder.append(System.lineSeparator());
-                stringBuilder.append("First error: ");
-                stringBuilder.append(ioException.getMessage());
-
-                if(Objects.isNull(ressourceDiffusableList) && Objects.isNull(localFileFromDAO) ){
-                    throw new RuntimeException("unable to retrieve resources, can't get");
-                }
-            }
-
+    private void updateRessourceDiffusableList() throws CacheUpdateFailureException {
+        log.info("Update of ressource diffusable list started");
+        String rawValue = null;
+        try {
+            log.debug("Invoking DAO");
+            rawValue = this.ressourceDiffusableDAO.getRessourceDiffusableRawJsonString();
+        } catch (RessourceDiffusableDAOException e) {
+            log.warn("Exception when invoking DAO: ",e);
         }
 
+        if(Objects.nonNull(rawValue) && Strings.isNotEmpty(rawValue)){
+            try {
+                log.debug("Writing DAO response to cache file");
+                cacheFileIO.writeRawJsonToCacheFile(rawValue);
+            } catch (IOException e) {
+                log.warn("Exception when writing DAO response to cache file: ",e);
+            }
+        }else {
+            try {
+                log.debug("Reading DAO response from cache file");
+                rawValue = cacheFileIO.getRawJsonFromCacheFile();
+                this.expiryLDT = LocalDateTime.now(this.clock).plusMinutes(30);
+                log.warn("Due to using already cached data, set cache expiry to {}, will use previously known ressources diffusables before next refresh", this.expiryLDT);
+            } catch (IOException e) {
+                log.warn("Exception when reading previous cache file:", e);
+                // here there is neither response from DAO neither data from a previous cache we can't update the list
+                throw new CacheUpdateFailureException("Failed");
+            }
+        }
 
+        try {
+            log.debug("Parsing DAO response");
+            this.ressourceDiffusableList = ressourceDiffusableParserService.parseRawJsonStringIntoRessourceDiffusableList(rawValue);
+        } catch (IOException e) {
+            log.warn("Could not parse raw json string:", e);
+            throw new CacheUpdateFailureException("Failed");
+        }
     }
+
+
 }

@@ -14,8 +14,11 @@
  */
 package fr.recia.ressourcesdiffusablesapi.service.dao.exceptions;
 
-public class NoGarJsonFileNotFound extends RuntimeException {
-    public NoGarJsonFileNotFound(String message) {
+public class RessourceDiffusableDAOException extends Exception {
+    public RessourceDiffusableDAOException(String message) {
         super(message);
+    }
+    public RessourceDiffusableDAOException(Exception exception) {
+        super(exception);
     }
 }

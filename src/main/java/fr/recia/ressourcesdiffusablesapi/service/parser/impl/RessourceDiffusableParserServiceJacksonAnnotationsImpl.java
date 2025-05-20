@@ -23,7 +23,6 @@ import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
 import fr.recia.ressourcesdiffusablesapi.service.parser.IRessourceDiffusableParserService;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.HashSet;
@@ -33,34 +32,28 @@ import java.util.function.Consumer;
 @Slf4j
 public class RessourceDiffusableParserServiceJacksonAnnotationsImpl implements IRessourceDiffusableParserService {
 
-
     @Override
-    public List<RessourceDiffusable> parseJsonIntoRessourceDiffusableList(File file) throws UncheckedIOException {
-        try {
-            ObjectMapper mapper = JsonMapper.builder()
-                    .constructorDetector(ConstructorDetector.EXPLICIT_ONLY)
-                    .build();
-            mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, false);
-            log.warn("before json node");
-            JsonNode rootNode = mapper.readTree(file);
-//        log.warn(rootNode.toString());
+    public List<RessourceDiffusable> parseRawJsonStringIntoRessourceDiffusableList(String rawJsonString) throws IOException {
 
-            JsonNode inside = rootNode.get(0);
-            JsonNode ressourceDiffusableNode = inside.get("ressourceDiffusable");
-            List<RessourceDiffusable> ressourceDiffusableList = mapper.readerForListOf(RessourceDiffusable.class).readValue(ressourceDiffusableNode);
+        log.info("Parsing raw JSON starting with: {}...",rawJsonString.substring(0,Math.min(25, rawJsonString.length())));
+        ObjectMapper mapper = JsonMapper.builder()
+                .constructorDetector(ConstructorDetector.EXPLICIT_ONLY)
+                .build();
+        mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, false);
+        JsonNode rootNode = mapper.readTree(rawJsonString);
 
-            Set<String> propertiesKeySet = new HashSet<>();
-            Consumer<RessourceDiffusable> addPropertyKeysToSet = (RessourceDiffusable rd) -> {propertiesKeySet.addAll(rd.getProperties().keySet());};
+        JsonNode inside = rootNode.get(0);
+        JsonNode ressourceDiffusableNode = inside.get("ressourceDiffusable");
+        List<RessourceDiffusable> ressourceDiffusableList = mapper.readerForListOf(RessourceDiffusable.class).readValue(ressourceDiffusableNode);
 
-            ressourceDiffusableList.forEach(addPropertyKeysToSet);
-            if(!propertiesKeySet.isEmpty()){
-                String joinedKeys = String.join(" - ", propertiesKeySet);
-                String message = String.format("Found one of more unknowns properties while parsing json file:  %s",joinedKeys);
-                log.warn(message);
-            }
-            return ressourceDiffusableList;
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        Set<String> propertiesKeySet = new HashSet<>();
+        Consumer<RessourceDiffusable> addPropertyKeysToSet = (RessourceDiffusable rd) -> {propertiesKeySet.addAll(rd.getProperties().keySet());};
+
+        ressourceDiffusableList.forEach(addPropertyKeysToSet);
+        if(!propertiesKeySet.isEmpty()){
+            String joinedKeys = String.join(" - ", propertiesKeySet);
+            log.warn("Found one of more unknowns properties while parsing json file: {}",joinedKeys);
         }
+        return ressourceDiffusableList;
     }
 }

@@ -14,15 +14,11 @@
  */
 package fr.recia.ressourcesdiffusablesapi.service.dao;
 
+import fr.recia.ressourcesdiffusablesapi.service.dao.exceptions.RessourceDiffusableDAOException;
+
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 @Resource
 public interface IRessourceDiffusableDAO {
-
-    public void refreshRessourceDiffusableFile() throws IOException;
-
-    public File getLocalFile() throws FileNotFoundException;
+    public String getRessourceDiffusableRawJsonString() throws RessourceDiffusableDAOException;
 }

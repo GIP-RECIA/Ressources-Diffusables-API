@@ -16,6 +16,8 @@ package fr.recia.ressourcesdiffusablesapi.config;
 
 import fr.recia.ressourcesdiffusablesapi.service.cache.impl.CacheServiceJsonImpl;
 import fr.recia.ressourcesdiffusablesapi.service.cache.ICacheService;
+import fr.recia.ressourcesdiffusablesapi.service.cache.io.ICacheFileIO;
+import fr.recia.ressourcesdiffusablesapi.service.cache.io.impl.CacheFileIO;
 import fr.recia.ressourcesdiffusablesapi.service.dao.IRessourceDiffusableDAO;
 import fr.recia.ressourcesdiffusablesapi.service.parser.IRessourceDiffusableParserService;
 import org.springframework.context.annotation.Bean;
@@ -39,8 +41,15 @@ public class CacheConfiguration {
             this.clock = clock;
         }
 
+    @Bean
+    public ICacheFileIO cacheFileIO(){
+        return new CacheFileIO(appProperties);
+    }
+
         @Bean
         public ICacheService cacheService() {
-            return new CacheServiceJsonImpl(appProperties, ressourceDiffusableDAO, parserService, clock);
+            return new CacheServiceJsonImpl(appProperties, ressourceDiffusableDAO, parserService, clock, cacheFileIO());
         }
+
+
     }

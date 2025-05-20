@@ -15,6 +15,7 @@
 package fr.recia.ressourcesdiffusablesapi.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import fr.recia.ressourcesdiffusablesapi.config.beans.CacheProperties;
 import fr.recia.ressourcesdiffusablesapi.config.beans.CorsProperties;
 import fr.recia.ressourcesdiffusablesapi.config.beans.GARProperties;
 import fr.recia.ressourcesdiffusablesapi.config.beans.NoGARProperties;
@@ -41,7 +42,7 @@ public class AppProperties {
     private GARProperties gar = new GARProperties();
     private SoffitProperties soffit = new SoffitProperties();
     private NoGARProperties noGar = new NoGARProperties();
-    private long cacheLifetimeInSeconds = 0;
+    private CacheProperties cache = new CacheProperties();
 
     @PostConstruct
     private void init() throws JsonProcessingException {
@@ -55,7 +56,7 @@ public class AppProperties {
                 gar + ",\n" +
                 noGar + ",\n" +
                 soffit + ",\n" +
-                String.format("Cache lifetime: %s seconds",cacheLifetimeInSeconds) +
+                cache + ",\n" +
                 "\n}";
     }
 
