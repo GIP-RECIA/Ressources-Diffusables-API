@@ -12,24 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.ressourcesdiffusablesapi.config.beans;
+package fr.recia.ressourcesdiffusablesapi.service.cache.io;
 
-import lombok.Data;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 
-@Data
-public class GARProperties {
+import java.io.IOException;
 
-    private String ressourcesDiffusablesUri;
-//    private String downloadLocationPath;
-//    private String downloadFileName;
+@Service
+public interface ICacheFileIO {
+    void writeRawJsonToCacheFile(String rawValue) throws IOException;
 
-    @Override
-    public String toString() {
-        return "\"GARProperties\": {" +
-                "\n\t\"ressourcesDiffusablesUri\": \"" + ressourcesDiffusablesUri + "\"" +
-//                "\n\t\"downloadLocationPath\": \"" + downloadLocationPath + "\"" +
-//                "\n\t\"dowloadFileName\": \"" + downloadFileName + "\"" +
-                "\n}";
-    }
-
+    String getRawJsonFromCacheFile() throws IOException;
 }

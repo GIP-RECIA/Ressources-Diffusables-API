@@ -16,10 +16,9 @@ package fr.recia.ressourcesdiffusablesapi.service.parser;
 
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 public interface IRessourceDiffusableParserService {
-    public List<RessourceDiffusable> parseJsonIntoRessourceDiffusableList(File file);
+    public List<RessourceDiffusable> parseRawJsonStringIntoRessourceDiffusableList(String rawJsonString) throws IOException;
 }

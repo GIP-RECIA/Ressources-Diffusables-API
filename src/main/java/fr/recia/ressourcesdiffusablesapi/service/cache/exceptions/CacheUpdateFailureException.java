@@ -12,24 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.ressourcesdiffusablesapi.config.beans;
+package fr.recia.ressourcesdiffusablesapi.service.cache.exceptions;
 
-import lombok.Data;
-
-@Data
-public class GARProperties {
-
-    private String ressourcesDiffusablesUri;
-//    private String downloadLocationPath;
-//    private String downloadFileName;
-
-    @Override
-    public String toString() {
-        return "\"GARProperties\": {" +
-                "\n\t\"ressourcesDiffusablesUri\": \"" + ressourcesDiffusablesUri + "\"" +
-//                "\n\t\"downloadLocationPath\": \"" + downloadLocationPath + "\"" +
-//                "\n\t\"dowloadFileName\": \"" + downloadFileName + "\"" +
-                "\n}";
+public class CacheUpdateFailureException extends Exception {
+    public CacheUpdateFailureException(String message) {
+        super(message);
     }
-
+    public CacheUpdateFailureException(Exception exception) {
+        super(exception);
+    }
 }
