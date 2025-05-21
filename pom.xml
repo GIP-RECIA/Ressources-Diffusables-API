@@ -135,6 +135,7 @@
                 <version>3.4.0</version>
                 <configuration>
                     <packagingExcludes>**/application-*.yml</packagingExcludes>
+                    <packagingExcludes>**/*.json</packagingExcludes>
                     <attachClasses>true</attachClasses>
                 </configuration>
             </plugin>
