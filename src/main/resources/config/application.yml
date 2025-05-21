@@ -55,7 +55,7 @@ app:
   use-gar: true
   gar:
     ressources-diffusables-uri: 'ressources/diffusables/uri'
-    download-location-path: 'file:/path/to/containing/folder'
+    download-location-path: '/path/to/containing/folder'
     download-file-name: 'name-of-file.json'
   no-gar:
     local-json-file-path: '/local/ressourcesDiffusables.json'
