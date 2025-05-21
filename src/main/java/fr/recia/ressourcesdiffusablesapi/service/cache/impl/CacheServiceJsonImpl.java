@@ -97,34 +97,33 @@ public class CacheServiceJsonImpl implements ICacheService {
             log.debug("Invoking DAO");
             rawValue = this.ressourceDiffusableDAO.getRessourceDiffusableRawJsonString();
         } catch (RessourceDiffusableDAOException e) {
-            log.warn("Exception when invoking DAO: ",e);
+            log.error("Exception when invoking DAO: ",e);
         }
 
         if(Objects.nonNull(rawValue) && Strings.isNotEmpty(rawValue)){
             try {
-                log.debug("Writing DAO response to cache file");
+                log.info("Writing DAO response to cache file");
                 cacheFileIO.writeRawJsonToCacheFile(rawValue);
             } catch (IOException e) {
-                log.warn("Exception when writing DAO response to cache file: ",e);
+                log.error("Exception when writing DAO response to cache file: ",e);
             }
         }else {
             try {
-                log.debug("Reading DAO response from cache file");
+                log.info("Reading DAO response from cache file");
                 rawValue = cacheFileIO.getRawJsonFromCacheFile();
                 this.expiryLDT = LocalDateTime.now(this.clock).plusMinutes(30);
                 log.warn("Due to using already cached data, set cache expiry to {}, will use previously known ressources diffusables before next refresh", this.expiryLDT);
             } catch (IOException e) {
-                log.warn("Exception when reading previous cache file:", e);
+                log.error("Exception when reading previous cache file:", e);
                 // here there is neither response from DAO neither data from a previous cache we can't update the list
                 throw new CacheUpdateFailureException("Failed");
             }
         }
-
         try {
-            log.debug("Parsing DAO response");
+            log.info("Parsing DAO response");
             this.ressourceDiffusableList = ressourceDiffusableParserService.parseRawJsonStringIntoRessourceDiffusableList(rawValue);
         } catch (IOException e) {
-            log.warn("Could not parse raw json string:", e);
+            log.error("Exception when parsing raw json string:", e);
             throw new CacheUpdateFailureException("Failed");
         }
     }
