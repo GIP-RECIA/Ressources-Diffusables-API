@@ -28,11 +28,12 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -68,85 +69,77 @@ public abstract class RessourceDiffusableParserServiceTest {
         listAppender.start();
         log.addAppender(listAppender);
     }
-//
-//    @Test @Order(1)
-//    public void missingKeysInJsonDoesNotThrows(){
-//        File file = new File(resourcesWithMissingKeysJsonFilePath);
-//        Assertions.assertDoesNotThrow(()-> parserService.parseRawJsonStringIntoRessourceDiffusableList(file));
-//    }
-//
-//
-//    @Test @Order(2)
-//    public void missingKeysInJsonAreDefaultsValuesInModel(){
-//        File file = new File(resourcesWithMissingKeysJsonFilePath);
-//        List<RessourceDiffusable> ressourceDiffusableList = parserService.parseRawJsonStringIntoRessourceDiffusableList(file);
-//        for (RessourceDiffusable ressourceDiffusable : ressourceDiffusableList){
-//            assertNotEquals(null, ressourceDiffusable.getRessource());
-//            assertNotEquals(null, ressourceDiffusable.getRessource().getId());
-//            assertNotEquals(null, ressourceDiffusable.getRessource().getId());
-//            assertNotEquals(null, ressourceDiffusable.getEditeur());
-//            assertNotEquals(null, ressourceDiffusable.getDistributeurTech());
-//            assertNotEquals(null, ressourceDiffusable.getDistributeursCom());
-//
-//        }
-//    }
-//
-//    @Test @Order(3)
-//    public void nullValuesInJsonDoesNotThrows(){
-//        File file = new File(resourcesWithNullValuesJsonFilePath);
-//        Assertions.assertDoesNotThrow(()-> parserService.parseRawJsonStringIntoRessourceDiffusableList(file));
-//    }
-//
-//    @Test @Order(4)
-//    public void nullValuesInJsonAreDefaultsValuesInModel(){
-//        File file = new File(resourcesWithNullValuesJsonFilePath);
-//        List<RessourceDiffusable> ressourceDiffusableList = parserService.parseRawJsonStringIntoRessourceDiffusableList(file);
-//        for (RessourceDiffusable ressourceDiffusable : ressourceDiffusableList){
-//            assertNotEquals(ressourceDiffusable.getRessource(), null);
-//            // AttributRessource is always instantiated with empty string if no value is provided in the current implementation
-//            // so there is no needs to test getId() or getNom() on it
-//            assertNotEquals(ressourceDiffusable.getEditeur(), null);
-//            assertNotEquals(ressourceDiffusable.getDistributeurTech(), null);
-//            assertNotEquals(ressourceDiffusable.getDistributeursCom(), null);
-//
-//        }
-//    }
 
-//    @Test @Order(5)
-//    public void unknownKeysInJsonDoesNotThrow()
-//    {
-//        assertDoesNotThrow( ()-> parserService.parseRawJsonStringIntoRessourceDiffusableList(new File(ressourcesWithUnknownKeys)));
-//    }
-//
-//    @Test @Order(6)
-//    public void unknownKeysInJsonAreCaughtInPropertiesMap()
-//    {
-//        List<RessourceDiffusable> ressourceDiffusableList = parserService.parseRawJsonStringIntoRessourceDiffusableList(new File(ressourcesWithUnknownKeys));
-//        boolean atLeastOnePropertiesMapNotEmpty = false;
-//        for(RessourceDiffusable ressourceDiffusable: ressourceDiffusableList){
-//            if(!ressourceDiffusable.getProperties().isEmpty()){
-//                atLeastOnePropertiesMapNotEmpty = true;
-//                break;
-//            }
-//        }
-//        assertTrue(atLeastOnePropertiesMapNotEmpty,"All properties map where empty");
-//
-//    }
-//    @Test @Order(7)
-//    public void unknownKeysInJsonLogged_OK() throws IOException {
-//
-//        List<RessourceDiffusable> list = parserService.parseRawJsonStringIntoRessourceDiffusableList(new File(ressourcesWithUnknownKeys));
-//        List<ILoggingEvent> loggingEvents = listAppender.list;
-//        int count = Math.toIntExact(loggingEvents.stream()
-//                .filter(x -> x.getFormattedMessage().contains("Found one of more unknowns properties while parsing json file: ")).count());
-//        Assertions.assertTrue(count > 0);
-//    }
+    @Test @Order(1)
+    public void missingKeysInJsonDoesNotThrows() throws IOException {
+
+        String content = Files.readString(Path.of(resourcesWithMissingKeysJsonFilePath), Charset.defaultCharset());
+        Assertions.assertDoesNotThrow(()-> parserService.parseRawJsonStringIntoRessourceDiffusableList(content));
+    }
 
 
+    @Test @Order(2)
+    public void missingKeysInJsonAreDefaultsValuesInModel() throws IOException {
+        String content = Files.readString(Path.of(resourcesWithMissingKeysJsonFilePath), Charset.defaultCharset());
+        List<RessourceDiffusable> ressourceDiffusableList = parserService.parseRawJsonStringIntoRessourceDiffusableList(content);
+        for (RessourceDiffusable ressourceDiffusable : ressourceDiffusableList){
+            assertNotEquals(null, ressourceDiffusable.getRessource());
+            assertNotEquals(null, ressourceDiffusable.getRessource().getId());
+            assertNotEquals(null, ressourceDiffusable.getRessource().getId());
+            assertNotEquals(null, ressourceDiffusable.getEditeur());
+            assertNotEquals(null, ressourceDiffusable.getDistributeurTech());
+            assertNotEquals(null, ressourceDiffusable.getDistributeursCom());
+        }
+    }
 
+    @Test @Order(3)
+    public void nullValuesInJsonDoesNotThrows() throws IOException {
+        String content = Files.readString(Path.of(resourcesWithNullValuesJsonFilePath), Charset.defaultCharset());
+        Assertions.assertDoesNotThrow(()-> parserService.parseRawJsonStringIntoRessourceDiffusableList(content));
+    }
 
+    @Test @Order(4)
+    public void nullValuesInJsonAreDefaultsValuesInModel() throws IOException {
+        String content = Files.readString(Path.of(resourcesWithNullValuesJsonFilePath), Charset.defaultCharset());
+        List<RessourceDiffusable> ressourceDiffusableList = parserService.parseRawJsonStringIntoRessourceDiffusableList(content);
+        for (RessourceDiffusable ressourceDiffusable : ressourceDiffusableList){
+            assertNotEquals(null, ressourceDiffusable.getRessource());
+            // AttributRessource is always instantiated with empty string if no value is provided in the current implementation
+            // so there is no needs to test getId() or getNom() on it
+            assertNotEquals(null, ressourceDiffusable.getEditeur());
+            assertNotEquals(null, ressourceDiffusable.getDistributeurTech());
+            assertNotEquals(null, ressourceDiffusable.getDistributeursCom());
 
+        }
+    }
 
+    @Test @Order(5)
+    public void unknownKeysInJsonDoesNotThrow() throws IOException {
+        String content = Files.readString(Path.of(ressourcesWithUnknownKeys), Charset.defaultCharset());
+        assertDoesNotThrow( ()-> parserService.parseRawJsonStringIntoRessourceDiffusableList(content));
+    }
+
+    @Test @Order(6)
+    public void unknownKeysInJsonAreCaughtInPropertiesMap() throws IOException {
+        String content = Files.readString(Path.of(ressourcesWithUnknownKeys), Charset.defaultCharset());
+        List<RessourceDiffusable> ressourceDiffusableList = parserService.parseRawJsonStringIntoRessourceDiffusableList(content);
+        boolean atLeastOnePropertiesMapNotEmpty = false;
+        for(RessourceDiffusable ressourceDiffusable: ressourceDiffusableList){
+            if(!ressourceDiffusable.getProperties().isEmpty()){
+                atLeastOnePropertiesMapNotEmpty = true;
+                break;
+            }
+        }
+        assertTrue(atLeastOnePropertiesMapNotEmpty,"All properties map where empty");
+    }
+
+    @Test @Order(7)
+    public void unknownKeysInJsonLogged_OK() throws IOException {
+        String content = Files.readString(Path.of(ressourcesWithUnknownKeys), Charset.defaultCharset());
+        List<RessourceDiffusable> list = parserService.parseRawJsonStringIntoRessourceDiffusableList(content);
+        List<ILoggingEvent> loggingEvents = listAppender.list;
+        int count = Math.toIntExact(loggingEvents.stream()
+                .filter(x -> x.getFormattedMessage().contains("Found one of more unknowns properties while parsing json file: ")).count());
+        Assertions.assertTrue(count > 0);
+    }
 }
-
-
