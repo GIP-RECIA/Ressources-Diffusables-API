@@ -40,6 +40,10 @@ public class AttributRessource implements Serializable {
         this.nom = "";
     }
 
+    public AttributRessource copy(){
+        return new AttributRessource(this.id, this.nom);
+    }
+
     public String getId() {
         return this.id;
     }
