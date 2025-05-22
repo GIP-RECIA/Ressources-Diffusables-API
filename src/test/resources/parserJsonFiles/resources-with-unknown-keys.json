@@ -1,0 +1,31 @@
+[{"dateGeneration":" 2021-05-19T03:15:29Z",
+  "ressourceDiffusable":[
+    {
+      "idRessource":"IDR_A",
+      "nomRessource":"NomR_A",
+      "idEditeur":"IDE_A",
+      "nomEditeur": "NomE_A" ,
+      "distributeursCom":[{
+        "distributeurCom":"IDDC_A_1"}],
+      "distributeurTech":"IDDT_A",
+      "affichable":true,
+      "diffusable":true,
+      "newKeyA": true,
+      "newKeyB": "47"
+    },
+    {
+      "idRessource":"IDR_B",
+      "nomRessource":"NomR_B",
+      "idEditeur":"IDE_B",
+      "distributeursCom":[{
+        "distributeurCom":"IDDC_B_1",
+        "nomDistributeurCom":"NomDC_B_1"}],
+      "distributeurTech":"IDDT_B",
+      "nomDistributeurTech":"NomDT_B",
+      "affichable":true,
+      "diffusable":true,
+      "membreFamille":"familleB",
+      "newKeyC": "test"
+    }
+  ]
+}]
