@@ -12,7 +12,7 @@
 
     <groupId>fr.recia</groupId>
     <artifactId>ressources-diffusables-api</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>Ressources Diffusables API</name>
     <description>API des ressources diffusables</description>
@@ -144,7 +144,7 @@
     <scm>
         <connection>scm:git:ssh://git@github.com:GIP-RECIA/Ressources-Diffusables-API.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/GIP-RECIA/Ressources-Diffusables-API.git</developerConnection>
-        <tag>ressources-diffusables-api-1.0.0</tag>
+        <tag>HEAD</tag>
         <url>https://github.com/GIP-RECIA/Ressources-Diffusables-API.git</url>
     </scm>
 
