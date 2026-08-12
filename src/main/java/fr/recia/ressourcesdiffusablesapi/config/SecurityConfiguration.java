@@ -14,56 +14,56 @@
  */
 package fr.recia.ressourcesdiffusablesapi.config;
 
+import fr.recia.notifications.soffit_java_client.SoffitJwtAuthenticationFilter;
+import fr.recia.notifications.soffit_java_client.SoffitJwtValidator;
+import fr.recia.ressourcesdiffusablesapi.config.beans.SoffitProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.soffit.security.SoffitApiAuthenticationManager;
-import org.apereo.portal.soffit.security.SoffitApiPreAuthenticatedProcessingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 
 @Slf4j
 @Configuration
+@Profile("!test")
 @EnableWebSecurity
 public class SecurityConfiguration {
 
     private final AppProperties appProperties;
 
-    public SecurityConfiguration(AppProperties appProperties) {
+    private final SoffitProperties jwtProperties;
+
+    public SecurityConfiguration(AppProperties appProperties, SoffitProperties jwtProperties) {
         this.appProperties = appProperties;
+        this.jwtProperties = jwtProperties;
+    }
+
+
+    @Bean
+    SoffitJwtValidator soffitJwtValidator() {
+        return new SoffitJwtValidator(jwtProperties.getJwtSignatureKey());
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        final RequestMatcher pathMatcher = new AntPathRequestMatcher("/api/**");
-        final RequestMatcher inverseMatcher = new NegatedRequestMatcher(pathMatcher);
-
-        return web -> web.ignoring().requestMatchers(inverseMatcher);
+    SoffitJwtAuthenticationFilter soffitJwtAuthenticationFilter(SoffitJwtValidator validator) {
+        return new SoffitJwtAuthenticationFilter(validator);
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        final AbstractPreAuthenticatedProcessingFilter filter = new SoffitApiPreAuthenticatedProcessingFilter(
-                appProperties.getSoffit().getJwtSignatureKey()
-        );
-
-        filter.setAuthenticationManager(authenticationManager());
-
-        http.addFilter(filter);
+    SecurityFilterChain securityFilterChain(HttpSecurity http, SoffitJwtAuthenticationFilter filter) {
         http.authorizeHttpRequests(authz -> authz
-                .antMatchers("/health-check").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/**").authenticated()
+                .requestMatchers("/health-check").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/**").authenticated()
                 .anyRequest().denyAll()
         );
-        http.sessionManagement().sessionFixation().newSession();
+        http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

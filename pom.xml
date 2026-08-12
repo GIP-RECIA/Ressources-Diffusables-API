@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>4.1.0</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
@@ -18,8 +18,8 @@
     <description>API des ressources diffusables</description>
 
     <properties>
-        <check.java.version>11</check.java.version>
-        <java.version>11</java.version>
+        <java.version>25</java.version>
+        <lombok.version>1.18.42</lombok.version>
     </properties>
 
     <dependencies>
@@ -35,6 +35,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -71,11 +72,18 @@
 
         <!-- == DatatypeConverter (Lire les JWT) == -->
         <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>4.0.1</version>
+            <groupId>fr.recia.notifications</groupId>
+            <artifactId>soffit-java-client</artifactId>
+            <version>0.0.2</version>
         </dependency>
         <!-- == §§ == -->
+
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- == Annotation Processor (Configurations application.yml additionnelles) == -->
         <dependency>
@@ -85,6 +93,20 @@
         </dependency>
         <!-- == §§ == -->
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>recia</id>
+            <url>https://nexus.recia.dev/repository/public/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
@@ -136,6 +158,21 @@
                     <packagingExcludes>**/application-*.yml</packagingExcludes>
                     <packagingExcludes>**/*.json</packagingExcludes>
                     <attachClasses>true</attachClasses>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.0</version>
+                <configuration>
+                    <release>25</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
         </plugins>

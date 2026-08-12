@@ -29,11 +29,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -65,22 +65,22 @@ public class CacheServiceJsonImplTest {
     @Autowired
     private ApplicationContext ctx;
 
-    @MockBean
+    @MockitoBean
     private Clock clock;
 
-    @MockBean
+    @MockitoBean
     private IRessourceDiffusableDAO ressourceDiffusableDAO;
 
-    @MockBean
+    @MockitoBean
     private ICacheFileIO cacheFileIO;
 
-    @MockBean
+    @MockitoBean
     private IRessourceDiffusableParserService ressourceDiffusableParserService;
 
-    @SpyBean
+    @MockitoSpyBean
     private AppProperties appProperties;
 
-    @MockBean
+    @MockitoBean
     CacheProperties cacheProperties;
 
 

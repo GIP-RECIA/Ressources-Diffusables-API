@@ -15,11 +15,24 @@
 package fr.recia.ressourcesdiffusablesapi.config.beans;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import jakarta.annotation.PostConstruct;
 
 @Data
+@Slf4j
+@ConfigurationProperties(prefix = "app.soffit", ignoreUnknownFields = true)
 public class SoffitProperties {
 
     private String jwtSignatureKey;
+
+
+    @PostConstruct
+    void init(){
+        log.info(this.toString());
+        System.out.println(this.toString());
+    }
 
     @Override
     public String toString() {

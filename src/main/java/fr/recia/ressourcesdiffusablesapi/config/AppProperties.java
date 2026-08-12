@@ -14,7 +14,7 @@
  */
 package fr.recia.ressourcesdiffusablesapi.config;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hazelcast.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 import fr.recia.ressourcesdiffusablesapi.config.beans.CacheProperties;
 import fr.recia.ressourcesdiffusablesapi.config.beans.CorsProperties;
 import fr.recia.ressourcesdiffusablesapi.config.beans.GARProperties;
@@ -40,7 +40,7 @@ public class AppProperties {
 
     private CorsProperties cors = new CorsProperties();
     private GARProperties gar = new GARProperties();
-    private SoffitProperties soffit = new SoffitProperties();
+//    private SoffitProperties soffit = new SoffitProperties();
     private NoGARProperties noGar = new NoGARProperties();
     private CacheProperties cache = new CacheProperties();
 
@@ -55,7 +55,7 @@ public class AppProperties {
                 cors + ",\n" +
                 gar + ",\n" +
                 noGar + ",\n" +
-                soffit + ",\n" +
+//                soffit + ",\n" +
                 cache + ",\n" +
                 "\n}";
     }

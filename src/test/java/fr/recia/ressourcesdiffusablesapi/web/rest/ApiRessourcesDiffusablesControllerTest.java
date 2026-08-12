@@ -14,6 +14,8 @@
  */
 package fr.recia.ressourcesdiffusablesapi.web.rest;
 
+import fr.recia.ressourcesdiffusablesapi.config.TestSecurityConfiguration;
+import fr.recia.ressourcesdiffusablesapi.config.beans.SoffitProperties;
 import fr.recia.ressourcesdiffusablesapi.model.PaginationRequest;
 import fr.recia.ressourcesdiffusablesapi.model.PaginationResponse;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
@@ -26,30 +28,43 @@ import fr.recia.ressourcesdiffusablesapi.web.rest.matchers.PaginationRequestMatc
 import fr.recia.ressourcesdiffusablesapi.web.rest.matchers.RessourceDiffusableFilterMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @ExtendWith(SpringExtension.class)
 @Slf4j
 @WithMockUser
-@WebMvcTest
+@SpringBootTest
+@ActiveProfiles("test")
+@AutoConfigureMockMvc
+@Import(TestSecurityConfiguration.class)
 class ApiRessourcesDiffusablesControllerTest {
 
-    @MockBean
+    @MockitoBean
     private IRessourceDiffusableFilterService filterService;
 
     @Autowired
@@ -70,11 +85,19 @@ class ApiRessourcesDiffusablesControllerTest {
 
         PaginationRequest paginationRequest = new PaginationRequest(requestPage, resourcesPerPage);
         RessourceDiffusableFilter ressourceDiffusableFilter = new RessourceDiffusableFilter(operator, null,null,null,null,null,null,null,null,null, null);
+        doReturn(tuple2Values)
+                .when(filterService)
+                .getRessourcesDiffusablesFiltered(
+                        argThat(new RessourceDiffusableFilterMatcher(ressourceDiffusableFilter)),
+                        argThat(new PaginationRequestMatcher(paginationRequest))
+                );
 
-        doReturn(tuple2Values).when(filterService).getRessourcesDiffusablesFiltered(argThat(new RessourceDiffusableFilterMatcher(ressourceDiffusableFilter)), argThat(new PaginationRequestMatcher(paginationRequest)));
-
-        String stringUrlTemplate = String.format("/api/ressources-diffusables?page=%1$d&ressourcesPerPage=%2$d&operator=%3$s", requestPage, resourcesPerPage, operator);
-        this.mockListRessourcesMvc.perform(get(stringUrlTemplate)
+        mockListRessourcesMvc
+                .perform(get("/api/ressources-diffusables")
+                        .with(user("testUser").roles("USER"))
+                        .param("page", String.valueOf(requestPage))
+                        .param("ressourcesPerPage", String.valueOf(resourcesPerPage))
+                        .param("operator", operator)
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .accept(TestUtil.APPLICATION_JSON_UTF8))
                 .andDo(MockMvcResultHandlers.print())
@@ -146,6 +169,7 @@ class ApiRessourcesDiffusablesControllerTest {
     @Test
     void testJsonApiRessourcesDiffusablesBadRequest() throws Exception {
         this.mockListRessourcesMvc.perform(get("/api/ressources-diffusables?page=pokemon")
+                        .with(user("testUser").roles("USER"))
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .accept(TestUtil.APPLICATION_JSON_UTF8))
                 .andDo(MockMvcResultHandlers.print())

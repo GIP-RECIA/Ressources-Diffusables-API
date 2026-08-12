@@ -20,6 +20,8 @@ import fr.recia.ressourcesdiffusablesapi.model.apiresponse.ApiResponse;
 import fr.recia.ressourcesdiffusablesapi.model.apiresponse.ApiResponseError;
 import fr.recia.ressourcesdiffusablesapi.service.filter.IRessourceDiffusableFilterService;
 import fr.recia.ressourcesdiffusablesapi.web.rest.exceptions.RequestArgumentNumericValueInvalidException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +34,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @RestController

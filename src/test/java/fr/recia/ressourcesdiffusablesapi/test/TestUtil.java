@@ -19,7 +19,6 @@ import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.http.MediaType;
 
 /**
@@ -32,7 +31,6 @@ public class TestUtil {
     private static ObjectMapper createObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        mapper.registerModule(new JavaTimeModule());
         return mapper;
     }
 

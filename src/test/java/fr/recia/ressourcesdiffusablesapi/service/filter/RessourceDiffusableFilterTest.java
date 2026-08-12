@@ -14,6 +14,7 @@
  */
 package fr.recia.ressourcesdiffusablesapi.service.filter;
 
+import fr.recia.ressourcesdiffusablesapi.config.TestSecurityConfiguration;
 import fr.recia.ressourcesdiffusablesapi.model.PaginationRequest;
 import fr.recia.ressourcesdiffusablesapi.model.PaginationResponse;
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
@@ -22,15 +23,18 @@ import fr.recia.ressourcesdiffusablesapi.model.tuple.Tuple2Values;
 import fr.recia.ressourcesdiffusablesapi.service.cache.ICacheService;
 import fr.recia.ressourcesdiffusablesapi.service.filter.impl.RessourceDiffusableFilterServiceDefaultImpl;
 import fr.recia.ressourcesdiffusablesapi.test.utils.RessourceDiffusableForMockFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -42,15 +46,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
+@ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringJUnitConfig
 @SpringBootTest
-@DirtiesContext(classMode= DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class RessourceDiffusableFilterTest {
 
-    @MockBean
+    @MockitoBean
     ICacheService cacheService;
 
     @Autowired

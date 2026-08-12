@@ -14,12 +14,18 @@
  */
 package fr.recia.ressourcesdiffusablesapi.web.rest;
 
+import fr.recia.ressourcesdiffusablesapi.config.TestSecurityConfiguration;
 import fr.recia.ressourcesdiffusablesapi.test.TestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -30,21 +36,17 @@ import javax.annotation.PostConstruct;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles("test")
+@AutoConfigureMockMvc
+@Import(TestSecurityConfiguration.class)
 @ExtendWith(SpringExtension.class)
 @Slf4j
 @SpringBootTest
 class HealthCheckTest {
 
+    @Autowired
     private MockMvc mockHealthCheckMvc;
 
-    @PostConstruct
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-
-        HealthCheckController healthCheckController = new HealthCheckController();
-
-        this.mockHealthCheckMvc = MockMvcBuilders.standaloneSetup(healthCheckController).build();
-    }
 
     @Test
     void testHealthCheck() throws Exception {
