@@ -15,7 +15,6 @@ package fr.recia.ressourcesdiffusablesapi.config.beans;
  * limitations under the License.
  */
 
-import com.fasterxml.jackson.databind.util.ISO8601Utils;
 import fr.recia.ressourcesdiffusablesapi.utils.Utils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

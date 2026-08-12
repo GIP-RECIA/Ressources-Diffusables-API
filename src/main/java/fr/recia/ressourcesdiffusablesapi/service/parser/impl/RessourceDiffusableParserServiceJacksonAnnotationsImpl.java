@@ -14,17 +14,16 @@
  */
 package fr.recia.ressourcesdiffusablesapi.service.parser.impl;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.cfg.ConstructorDetector;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import fr.recia.ressourcesdiffusablesapi.model.RessourceDiffusable;
 import fr.recia.ressourcesdiffusablesapi.service.parser.IRessourceDiffusableParserService;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.ConstructorDetector;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +38,6 @@ public class RessourceDiffusableParserServiceJacksonAnnotationsImpl implements I
         ObjectMapper mapper = JsonMapper.builder()
                 .constructorDetector(ConstructorDetector.EXPLICIT_ONLY)
                 .build();
-        mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, false);
         JsonNode rootNode = mapper.readTree(rawJsonString);
 
         JsonNode inside = rootNode.get(0);
