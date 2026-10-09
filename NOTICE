@@ -78,9 +78,11 @@ This project includes:
   Spring Web MVC under Apache License, Version 2.0
   spring-boot under Apache License, Version 2.0
   spring-boot-autoconfigure under Apache License, Version 2.0
+  spring-boot-configuration-metadata under Apache License, Version 2.0
   spring-boot-configuration-processor under Apache License, Version 2.0
   spring-boot-http-converter under Apache License, Version 2.0
   spring-boot-jackson under Apache License, Version 2.0
+  spring-boot-properties-migrator under Apache License, Version 2.0
   spring-boot-resttestclient under Apache License, Version 2.0
   spring-boot-security under Apache License, Version 2.0
   spring-boot-servlet under Apache License, Version 2.0

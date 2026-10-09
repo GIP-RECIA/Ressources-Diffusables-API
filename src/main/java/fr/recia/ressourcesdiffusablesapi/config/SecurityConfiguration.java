@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2021 GIP-RECIA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -59,7 +59,7 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, SoffitJwtAuthenticationFilter filter) {
         http.authorizeHttpRequests(authz -> authz
-                .requestMatchers("/health-check").permitAll()
+                .requestMatchers("/health-check", "/", "/ui/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/**").authenticated()
                 .anyRequest().denyAll()
         );

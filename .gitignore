@@ -42,16 +42,18 @@ build/
 .pnp.*
 
 node_modules
+node
 .DS_Store
 dist
 dist-ssr
 coverage
-.env
 *.local
 src/main/resources/**/application-*.yml
+!src/main/resources/**/application-test.yml
 !src/main/resources/**/application-*.example.yml
-temp.io
+*.bak
 src/main/resources/downloads
+temp.io
 
 ### Tests ###
 playwright-report
