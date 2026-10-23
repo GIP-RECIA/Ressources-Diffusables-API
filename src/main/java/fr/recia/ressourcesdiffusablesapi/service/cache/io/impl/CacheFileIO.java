@@ -44,9 +44,7 @@ public class CacheFileIO implements ICacheFileIO {
 
     @Override
     public String getRawJsonFromCacheFile() throws IOException {
-        String rawValue = Files.readString(Path.of(appProperties.getCache().getCacheLocationPath()+"/"+appProperties.getCache().getCacheFileName()));
-        log.debug(rawValue.substring(0,40));
-        return  rawValue;
+        return Files.readString(Path.of(appProperties.getCache().getCacheLocationPath()+"/"+appProperties.getCache().getCacheFileName()));
     }
 
 }

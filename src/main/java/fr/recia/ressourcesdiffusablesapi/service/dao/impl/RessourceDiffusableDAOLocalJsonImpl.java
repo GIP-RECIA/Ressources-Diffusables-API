@@ -41,11 +41,9 @@ public class RessourceDiffusableDAOLocalJsonImpl extends RessourceDiffusableDAOA
     @Override
     public String getRessourceDiffusableRawJsonString() throws RessourceDiffusableDAOException {
         try {
-          URI uri = Objects.requireNonNull(RessourceDiffusableDAOLocalJsonImpl.class.getResource(appProperties.getNoGar().getLocalJsonFilePath())).toURI();
-            String rawValue = Files.readString(Path.of(uri));
-            log.debug(rawValue.substring(0,40));
-            return  rawValue;
-        } catch (URISyntaxException | IOException e) {
+            final Path path = Path.of(appProperties.getNoGar().getLocalJsonFilePath());
+            return Files.readString(path);
+        } catch (IOException e) {
             throw new RessourceDiffusableDAOException(e);
         }
     }

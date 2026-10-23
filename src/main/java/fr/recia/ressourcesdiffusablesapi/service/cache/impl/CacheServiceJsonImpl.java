@@ -107,7 +107,7 @@ public class CacheServiceJsonImpl implements ICacheService {
             } catch (IOException e) {
                 log.error("Exception when writing DAO response to cache file: ",e);
             }
-        }else {
+         } else {
             try {
                 log.info("Reading DAO response from cache file");
                 rawValue = cacheFileIO.getRawJsonFromCacheFile();
