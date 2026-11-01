@@ -2257,12 +2257,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^24":
-  version: 24.19.1
-  resolution: "@types/node@npm:24.19.1"
+"@types/node@npm:^25":
+  version: 25.9.9
+  resolution: "@types/node@npm:25.9.9"
   dependencies:
     undici-types: "npm:>=7.24.0 <7.24.7"
-  checksum: 10/52c8d538a7d3b57699101912ae89093f97471ad5f4f9564e8012080f1aecadf26acbdbe072232da6d891d2dd9ce84c1a8e6edb29edc4bc307eda1d064de4d1e9
+  checksum: 10/8accbdd15bc035db3b20bf9353dabce847a5d3dd1f3976c25e67907f4fd287b00b8163f661fe48cd6d644e30a11e1dffd67e2742233209c7b7cbc500d14d394c
   languageName: node
   linkType: hard
 
@@ -7710,7 +7710,7 @@ __metadata:
     "@tsconfig/node24": "npm:^24.0.5"
     "@types/jsdom": "npm:^30"
     "@types/lodash-es": "npm:^4"
-    "@types/node": "npm:^24"
+    "@types/node": "npm:^25"
     "@types/regenerator-runtime": "npm:^0"
     "@types/xml2js": "npm:^0"
     "@typescript/native": "npm:typescript@^7.0.2"
