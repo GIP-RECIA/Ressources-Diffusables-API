@@ -4152,12 +4152,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^18.0.4":
-  version: 18.0.6
-  resolution: "dotenv@npm:18.0.6"
+"dotenv@npm:^18.0.9":
+  version: 18.0.9
+  resolution: "dotenv@npm:18.0.9"
   bin:
     dotenv: dist/index.cjs
-  checksum: 10/67f9d106d75db66c61a7257fe83da05a89fab1e78fce00e8ed066c95758e7cde5f6cdcc00fa00cc11bbe3d636d4aa9d3453fc805bf27060743844c04f967b284
+  checksum: 10/585a2667f55791c4eb854114d56af8dc26fc4f936b829cbd1974e42e74218a98158cbf0d495e1eec517e5dac9a425902cc16646a86a18a077d2cd403a5552dcc
   languageName: node
   linkType: hard
 
@@ -7834,7 +7834,7 @@ __metadata:
     axios: "npm:^1.21.0"
     commit-and-tag-version: "npm:^13.2.1"
     date-fns: "npm:^4.4.0"
-    dotenv: "npm:^18.0.4"
+    dotenv: "npm:^18.0.9"
     dotenv-checker: "npm:^1.1.7"
     eslint: "npm:^10.11.0"
     eslint-plugin-format: "npm:^2.0.1"
